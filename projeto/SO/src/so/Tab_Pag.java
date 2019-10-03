@@ -18,7 +18,7 @@ public class Tab_Pag {
 
     public Tab_Pag(String nome, int tamanho, int count) {
         this.nome = nome;
-        Paginas = new Componente_TP[calcula_pag(tamanho, 8)];
+        Paginas = new Componente_TP[tamanho];
         for(Componente_TP c: Paginas){
             c = new Componente_TP();
         }
@@ -33,13 +33,15 @@ public class Tab_Pag {
         return Paginas;
     }
 
+    public int getTab_Count() {
+        return Tab_Count;
+    }
+
     public void setPaginas(Componente_TP[] Paginas) {
         this.Paginas = Paginas;
     }
     
-    static public int calcula_pag(int tam_processo ,int tam_pagina) {
-        return tam_processo/tam_pagina + 1;
-    }
+    
     
     
     
