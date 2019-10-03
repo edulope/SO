@@ -7,6 +7,7 @@ package so;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
+import java.lang.*;
 
 
 
@@ -17,14 +18,14 @@ import java.util.Random;
 public class SO {
     static Scanner teclado = new Scanner(System.in);
     static final int TAM_MAX_QUADROS_MP = 1024;
-    static final int TAM_MAX_QUADROS_MS = 4096;
+    static final int TAM_MAX_PAGINAS_MS = 4096;
     static final int TAM_MAX_TABELA = 256;
     static Quadro[] Quadros = new Quadro[TAM_MAX_QUADROS_MP];
     static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();
     static ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
     static ArrayList<Processo> Tab_Processos = new ArrayList();
     static ArrayList<Processo> Tab_Processos_R = new ArrayList();
-    static Pagina[] Mem_Sec = new Pagina[TAM_MAX_QUADROS_MS];
+    static Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
     
     /**
      * @param args the command line arguments
@@ -147,21 +148,76 @@ public class SO {
             //
             
             //APAGA PROCESSO DA MEMORIA SECUNDARIA
-            for(int i = 0; i<TAM_MAX_QUADROS_MS; i++){
+            for(int i = 0; i<TAM_MAX_PAGINAS_MS; i++){
                 if(Mem_Sec[i] != null){
                     if(Mem_Sec[i].getProcesso().equals(Process_Name))
-                        {if(i+1 < TAM_MAX_QUADROS_MS){
+                        {if(i+1 < TAM_MAX_PAGINAS_MS){
                             Mem_Sec[i] = Mem_Sec[i+1];
                             i--;
                         }
                         else Mem_Sec[i] = null;}
                 }
-                else i = TAM_MAX_QUADROS_MS;
+                else i = TAM_MAX_PAGINAS_MS;
             }
             //
         }
         System.out.println(Tab_Processos);
        }
+    }
+    //AINDA NAO CODEI O RELOGIO
+     static public int Relogio(){
+        //procura o menos recente
+        long min = System.currentTimeMillis();
+        int Endereco = -1;
+        for(int i = 0; i<TAM_MAX_QUADROS_MP;i++){
+            if(Quadros[i] != null && Quadros[i].getLRU() < min){
+                Endereco = i;
+                min = Quadros[i].getLRU();
+            }
+        }
+        //
+        Contexto(Endereco);
+        return Endereco;
+    }
+     
+     
+    static public int LRU(){
+        //procura o menos recente
+        long min = System.currentTimeMillis();
+        int Endereco = -1;
+        for(int i = 0; i<TAM_MAX_QUADROS_MP;i++){
+            if(Quadros[i] != null && Quadros[i].getLRU() < min){
+                Endereco = i;
+                min = Quadros[i].getLRU();
+            }
+        }
+        //
+        Contexto(Endereco);
+        return Endereco;
+    }
+    
+    
+    static public void Contexto(int Endereco){
+         //atualiza tabela do processo e salva se foi modificado
+        if(Quadros[Endereco] != null){
+            String Processo = Quadros[Endereco].getProcesso();
+            int Pagina = Quadros[Endereco].getPagina();
+            for(Tab_Pag T: Tab_Pag_Master){
+                if(T.getNome().equals(Processo) && T.getTab_Count() == Pagina/TAM_MAX_TABELA){
+                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setP(false);
+                    if(T.getPaginas()[Pagina%TAM_MAX_TABELA].isM()){
+                        for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
+                            if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Processo) &&Mem_Sec[i].getPagina() == Pagina){
+                                Mem_Sec[i].setConteudo(Quadros[Endereco].getConteudo());
+                            }
+                        }
+                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
+                    }
+                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setQuadro(-1);
+                }
+            }
+        }
+        //
     }
 }
 
