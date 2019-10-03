@@ -26,5 +26,13 @@ public class Processo {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getTamanho() {
+        return tamanho;
+    }
     
 }
