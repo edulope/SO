@@ -1,0 +1,133 @@
+	
+Trabalho Prático - Sistemas Operacionais
+Memória Virtual 
+Objetivo:
+O objetivo deste trabalho é o de projetar e implementar um  gerenciamento de memória virtual com paginação simples, através da simulação de execução de processos submetidos em um sistema computacional.   
+O trabalho deve ser realizado em grupo de 3 alunos. Data de entrega: 16 de outubro
+
+Memória Virtual:
+Para gerenciar a memória, o gerenciador de memória GM implementa o esquema de paginação. Para tal, GM mantém uma tabela de páginas TP(Pi) para cada processo Pi. Cada entrada desta tabela deve pelo menos conter: 
+
+o bit P  de presença da referida página na memória principal (MP)
+o bit M  de modificação da referida página
+número do quadro em MP, quando a referida página está em memória. 
+Páginas da imagem devem ser carregadas para quadros da MP quando necessário.  Quando o processador requisitar acesso a um endereço virtual/relativo, um simulador do hardware que mapeia este endereço para o endereço real deve realizar o mapeamento, resultando no acesso ao endereço real caso a página esteja em memória, ou em caso de falta de página em MP, realizar os passos necessários para trazer a página para a MP (alocar um quadro que esteja disponível. Caso não haja disponibilidade, executar a política de substituição de páginas. 
+
+Ainda, é necessário implementar um swapper que suspenda um processo. Defina a situação em que o swapper deva entrar em ação!
+
+
+
+
+Política de substituição de páginas:
+O gerenciador de memória deve utilizar um algoritmo de substituição de páginas, para alocar um quadro a uma página não residente em memória no caso em que todos os quadros da  MP já estiverem alocados, e falta de página ocorre ao executar um determinado processo.  Os algoritmos a serem implementados devem ser:
+
+Algoritmo de substituição de páginas LRU e relógio com somente o bit de utilização u
+Escopo de substituição global
+Inicialmente, o GM deve alocar devidamente um (ou mais) quadro(s) para o processo, quando este for criado para que ele se torne pronto (além obviamente criar as estruturas de dados necessárias). Caso não tenha memória disponível, o algoritmo de substituição deve prover qual quadro deve ser utilizado. Atenção, se o quadro escolhido armazenar uma página ( a que será substituída) que foi modificada, a gravação desta deve ser realizada antes da carga da nova página a ser trazida para memória.
+
+
+
+Configuração do sistema:
+Seu sistema GM deve conter as seguintes opções de configuração de mecanismos associados à memória virtual:
+
+Tamanho total da Memória física (que deve ser múltiplo de tamanho do quadro) e Memória Secundária
+Tamanho da página de um processo e quadro de memória;
+Tamanho em bits do endereço lógico.
+
+Importante:
+Especificar as estruturas de dados necessárias para implementar cada política de substituição e escopo. Uma saída (interface amigável) deve mostrar:
+
+o que está acontecendo tanto na memória principal, quanto na secundária;
+a tabela de páginas associada a cada processo em execução;
+as ocorrências de falta de página;
+estado dos processos (e filas associadas). 
+Simulando a execução de processos
+A simulação deve será realizada de acordo com a leitura de uma série de comandos de acesso à memória (leitura/gravação), criação, terminação e execução de instruções de um processo, e instruções de entrada ou saída.
+
+Seu simulador deve ler de um arquivo as informações sobre a "vida" dos processos, contendo para cada processo, o tamanho de sua imagem e uma seqüência de operações de acesso à memória principal que o respectivo processo realiza.
+
+
+A entrada de seu simulador:
+Como entrada do simulador, representando a execução de um programa, uma sequência de situações podem ocorrer.  Como sabemos, processos podem ter instruções de executadas diretamente pela CPU ou pedidos de E/S. Sabemos ainda que para buscar tais instruções ou dados, pedidos de leitura devem ser executados. Para executar uma instrução, leitura ou gravações  em memória principal  podem ser realizadas. 
+
+Assim, flags são definidos para representar o que está acontecendo naquele momento em relação ao processo. Os seguintes flags serão utilizados:
+
+P -  instrução a ser executada pela CPU
+I -  instrução de I/O
+C -  criação (submissão de um processo)
+R - pedido de leitura em um endereço lógico
+W - pedido de escrita em um endereço lógico de um dado valor
+T - terminação de processo
+Em cada linha do arquivo de entrada, os seguintes comandos podem ser definidos, com o intuito de simular o que acontece naquele momento na vida de um processo. A sequencia de comandos deve ser tal que faça sentido em relação a execução dos processos (por exemplo, o processo tem que ser criado para depois ter suas instruções executadas). Assim, segue a sintaxe proposta dos comandos:
+
+número-do-processo P endereço-lógico
+
+é uma instrução sendo executada em CPU que está em um endereço lógico
+Ex. P1 P (1024)2 --> é uma instrução executada em CPU (pode ser uma soma ou subtração) que está no endereço lógico (1024)2
+número-do-processo I dispositivo
+
+é um pedido de I/O no dado dispositivo
+Ex. P1 I disco --> agora será executado uma instrução de entrada e saída pedido por P1 em disco
+número-do-processo R endereço-lógico
+
+leitura no endereço lógico de memória
+Ex. P1 R 1024 --> leitura no endereço lógico 1024
+número-do-processo W endereço-lógico valor
+
+gravação de valor no endereço lógico de memória
+Ex. P1 W 1024 100 --> grava o valor 100 no endereço lógico 1024
+número-do-processo C tamanho-do-processo (unidade)
+
+pedido de criação de um processo cuja imagem tem um determinado tamanho
+Ex. P1 C 320 MB --> cria P1 com 320 M bytes
+número-do-processo T
+
+terminação do processo
+Ex. P1 T --> processo P1 termina
+Exemplo de entrada:
+##### início do arquivo ######
+P1 C 500 MB
+
+P1 P (0)2
+
+P1 R (0)2
+
+P1 R (1024)2
+
+P1 P (1)2
+
+P1 R (1)2
+
+P1 P (2)2
+
+P1 W (1024)2
+
+P7 C 1000MB
+
+P7 R (4095)2
+
+P7 R (800)2
+
+P7 I (2)2
+
+P7 R (801)2
+
+P7 W (4096)2
+
+P1 R (3)2
+
+P1 R (4)2
+
+P1 W (1025)2
+
+P1 W (1026)2
+
+.....
+
+P1 T
+
+……etc
+
+##### final do arquivo ######
+
+Obs.: a notação (x)2 representa o valor x em binário
