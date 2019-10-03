@@ -42,9 +42,26 @@ public class SO {
             Tab_Processos.add(new Processo("P2", 3));
             Tab_Processos.add(new Processo("P1", 4));
         }
+        
+        
         else if(Command.equals("I")){
             System.out.println("E/S");
+             for(Processo P: Tab_Processos){
+                 System.out.println(P.getNome()+" "+ Process_Name);
+                if(P.getNome().equals(Process_Name)){
+                    if(P.getEstado().equals("Suspenso-Pronto")) P.setEstado("Suspenso-Bloqueado");
+                    else P.setEstado("Bloqueado");
+                }
+             }
+            Thread Request = new Thread(new ES(0, Process_Name));
+            Request.start();   
+            
         }
+        
+        
+        
+        
+        
         else if(Command.equals("C")){
             System.out.println("CRIANDO");
         }
@@ -98,3 +115,7 @@ public class SO {
        }
     }
 }
+
+
+
+

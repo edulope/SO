@@ -17,6 +17,7 @@ public class Processo {
     public Processo(String nome, int tamanho) {
         this.nome = nome;
         this.tamanho = tamanho;
+        this.estado = "iniciando";
     }
 
     public String getEstado() {
@@ -25,6 +26,11 @@ public class Processo {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    @Override
+    public String toString() {
+        return "Processo{" + "nome=" + nome + ", tamanho=" + tamanho + ", estado=" + estado + '}';
     }
 
     public String getNome() {
