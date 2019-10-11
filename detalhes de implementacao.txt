@@ -1,0 +1,7 @@
+Classe Memoria virtual:
+list de paginas
+list de processos
+vetor de quadros(ja que estaremos usando paginacoes simples)
+metodo de substituicao
+metodo de suspensao
+m

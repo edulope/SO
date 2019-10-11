@@ -9,6 +9,18 @@ import java.util.Scanner;
 import java.util.Random;
 import java.lang.*;
 
+/*
+Paginas: 1 kb
+tamanho maximo da memoria 1024*1kb
+tamanho maximo da ms 4096*1kb
+se um processo pode ter no maximo 1 tabela, entao tam maximo de um processo = 256*1kb
+*/
+
+/*Tab_Pag_Master(similar a tabela de segmentos, vai ser um array de tabelas de paginas)
+em cada tabela existe um array de paginas(Componente_TP)todas de um mesmo processo 
+os 10(1kb) bits menos significativos enderecam o deslocamento na pagina, em seguida 8 bits enderecam a pagina na tabela(max = 256), 
+depois os 5 bits enderecam a tabela, logo 5 + 8 + 10 = tamanho do endereco logico
+*/
 
 
 /**
@@ -21,7 +33,7 @@ public class SO {
     static final int TAM_MAX_PAGINAS_MS = 4096;
     static final int TAM_MAX_TABELA = 256;
     static Quadro[] Quadros = new Quadro[TAM_MAX_QUADROS_MP];
-    static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();
+    static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
     static ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
     static ArrayList<Processo> Tab_Processos = new ArrayList();
     static ArrayList<Processo> Tab_Processos_R = new ArrayList();
@@ -36,6 +48,14 @@ public class SO {
         String Description;
         String entrada = ""; 
         while(!(entrada.equals("E"))){
+        System.out.println("bem vindo ao SO, suas opcoes sao:");
+        System.out.println("P\nEx. P1 P (1024)2 --> é uma instrução executada em CPU (pode ser uma soma ou subtração) que está no endereço lógico (1024)2");
+        System.out.println("I\nEx. P1 I disco --> agora será executado uma instrução de entrada e saída pedido por P1 em disco");
+        System.out.println("R\nEx. P1 R 1024 --> leitura no endereço lógico 1024");
+        System.out.println("W\nEx. P1 W 1024 100 --> grava o valor 100 no endereço lógico 1024");
+        System.out.println("C\nEx. P1 C 320 MB --> cria P1 com 320 M bytes");
+        System.out.println("T\nEx. P1 T --> processo P1 termina");
+        System.out.println("ou E, para desligar o SO");
         entrada = teclado.nextLine();
         Process_Name = entrada.split(" ")[0];
         Command = entrada.split(" ")[1];
@@ -164,6 +184,9 @@ public class SO {
         System.out.println(Tab_Processos);
        }
     }
+    
+    
+    
     //AINDA NAO CODEI O RELOGIO
      static public int Relogio(){
         //procura o menos recente
