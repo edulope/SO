@@ -22,12 +22,12 @@ public class ES implements Runnable {
     @Override
     public void run () {
         System.out.println("ES DO PROCESSO " + Process + " CONCLUIDO");
-        System.out.println(SO.Mem_Sec[pedido]);
+        System.out.println(SO.Mem_Sec[pedido%SO.TAM_MAX_PAGINAS_MS]);
         for(Processo P: SO.Tab_Processos){
             
                 if(P.getNome().equals(Process)){
-                    if(P.getEstado().equals("Suspenso-bloqueado")) P.setEstado("Suspenso-pronto");
-                    else P.setEstado("pronto");
+                    if(P.getEstado().equals("Suspenso-Bloqueado")) P.setEstado("Suspenso-Pronto");
+                    else P.setEstado("Pronto");
                 }
 
         }
