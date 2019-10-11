@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 import java.lang.*;
+import static java.lang.Math.pow;
 
 /*
 Paginas: 1 kb
@@ -29,8 +30,8 @@ depois os 5 bits enderecam a tabela, logo 5 + 8 + 10 = tamanho do endereco logic
  */
 public class SO {
     static Scanner teclado = new Scanner(System.in);
-    static final int TAM_MAX_QUADROS_MP = 1024;
-    static final int TAM_MAX_PAGINAS_MS = 4096;
+    static final int TAM_MAX_QUADROS_MP = 1024*1024;
+    static final int TAM_MAX_PAGINAS_MS = 4096*1024;
     static final int TAM_MAX_TABELA = 256;
     static Quadro[] MP = new Quadro[TAM_MAX_QUADROS_MP];
     static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
@@ -107,12 +108,7 @@ public class SO {
                                 Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].setP(true);
                                 Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].setM(false);}
                         }
-
-                //
-                //busca processo na tabela de paginas
-                /*for(Processo P: Tab_Processos){
-                    if(P.getNome().equals(Process_Name)){
-                        P.setEstado("Executando");
+/*
                         for(Tab_Pag T: Tab_Pag_Master){
                             if(T.getNome().equals(Process_Name) && T.getTab_Count()== tabela){
                                 Componente_TP aux = T.getPaginas()[P.getTamanho()%TAM_MAX_TABELA];
@@ -170,11 +166,35 @@ public class SO {
 
 
 
-            else if(Command.equals("C")){
+            else if(Command.equals("C")){//cria processo em ms, adiciona na tabela de processos, adiciona na tabela de paginas
                 System.out.println("CRIANDO");
-                Tab_Processos.add(new Processo("P1", 2));
-                Tab_Processos.add(new Processo("P2", 3));
-                Tab_Processos.add(new Processo("P1", 4));
+                Description = entrada.split(" ")[2];
+                int Tamanho =  Integer.parseInt(Description);
+                Description = entrada.split(" ")[3];
+                if(Description.equals("B")) Tamanho = 1;
+                else if (Description.equals("KB")) Tamanho = Tamanho * 1;
+                else if (Description.equals("MB")) Tamanho = Tamanho * 1024;
+                else if (Description.equals("GB")) Tamanho = Tamanho * 1024*1024;
+                int aux = 0;
+                while(aux<TAM_MAX_PAGINAS_MS && Mem_Sec[aux] == null)aux++;
+                int N_Paginas = Tamanho/256;
+                if(Tamanho%256 != 0)N_Paginas ++;
+                if(aux + Tamanho <= TAM_MAX_PAGINAS_MS || Tab_Pag_Master.size() + N_Paginas >= 32){
+                    for(int i = aux; i<aux+Tamanho;i++){
+                        Mem_Sec[i] = new Pagina();
+                        Mem_Sec[i].setPagina(i-aux);
+                        Mem_Sec[i].setProcesso(Process_Name);
+                    }
+                    Tab_Processos.add(new Processo(Process_Name, Tamanho));
+                    for(int i = 0; i<N_Paginas;i++){
+                        if(i + 1 == N_Paginas)Tab_Pag_Master.add(new Tab_Pag(Process_Name,Tamanho%256,i));
+                        else Tab_Pag_Master.add(new Tab_Pag(Process_Name,256,i));
+                    }
+                    if(Mem_Vazia.get(0)[1] < 3)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
+                    else Tab_Processos.get(Tab_Processos.size()-1).setEstado("Pronto");
+                    
+                }
+                else System.out.println("NAO HA ESPACO EM DISCO");
             }
 
 
@@ -204,6 +224,10 @@ public class SO {
                     if(T.getNome().equals(Process_Name)){Tab_Pag_Master_R.add(T);
                         for(Componente_TP C: T.getPaginas()){
                             if(C.isP()) MP[C.getQuadro()] = new Quadro();
+                            int index;
+                            Mem_Vazia.add(new int[2]);
+                            Mem_Vazia.get(Mem_Vazia.size()-1)[0] = C.getQuadro();
+                            Mem_Vazia.get(Mem_Vazia.size()-1)[1] = 1;
                         }
                     }
                 }
@@ -228,14 +252,25 @@ public class SO {
             }
                 
                 
-            
+            Mem_List_Opt();
             System.out.println(Tab_Processos);
        
         }
     }
     
     
-    
+     static public void Mem_List_Opt(){
+         for(int i = 0;i<Mem_Vazia.size();i++){
+             for(int j = i+1;j<Mem_Vazia.size();j++){
+                 if( (!Mem_Vazia_R.contains(Mem_Vazia.get(j))) && Mem_Vazia.get(i)[0] + Mem_Vazia.get(i)[1] == Mem_Vazia.get(j)[0]){
+                     Mem_Vazia.get(i)[1] = Mem_Vazia.get(i)[1] + Mem_Vazia.get(j)[1];
+                     Mem_Vazia_R.add(Mem_Vazia.get(j));
+                 }
+            }
+         }
+         Mem_Vazia.removeAll(Mem_Vazia_R);
+    }
+     
      static public int Relogio(){
         int Endereco = -1;
         while(MP[clock_stack%TAM_MAX_QUADROS_MP].isBit_U()){
