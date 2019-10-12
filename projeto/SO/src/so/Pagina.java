@@ -9,7 +9,7 @@ package so;
  *
  * @author Joâo Pedro
  */
-public class Pagina {
+public class Pagina implements Comparable {
     private String Processo;
     private String Conteudo;
     private int Pagina;
@@ -47,5 +47,15 @@ public class Pagina {
     @Override
     public String toString() {
         return "Quadro{" + "Processo=" + Processo + ", Conteudo=" + Conteudo + ", Pagina=" + Pagina + '}';
+    }
+    
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null) return 1000;
+        if(o instanceof Pagina){Pagina comparestu = (Pagina) o;
+        if(comparestu.getProcesso().equals(this.Processo)) return this.Pagina - comparestu.getPagina();
+        else return comparestu.getProcesso().compareTo(this.Processo);}
+        return 1000;
     }
 }
