@@ -12,7 +12,7 @@ import static java.lang.Math.pow;
 import java.util.Collections;
 
 /*
-Paginas: 1 kb
+Paginas: 1 mb
 tamanho maximo da memoria 1024*1kb
 tamanho maximo da ms 4096*1kb
 se um processo pode ter no maximo 1 tabela, entao tam maximo de um processo = 256*1kb
@@ -39,18 +39,136 @@ public class SO {
     static ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
     static ArrayList<Processo> Tab_Processos = new ArrayList();
     static ArrayList<Processo> Tab_Processos_R = new ArrayList();
-    static ArrayList<int[]> Mem_Vazia = new ArrayList<int[]>();
-    static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();
+    /*static ArrayList<int[]> Mem_Vazia = new ArrayList<int[]>();
+    static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();*/
     static Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
     static int clock_stack = 0;
+
+    /*static public void Mem_List_Opt(){
+        for(int i = 0;i<Mem_Vazia.size();i++){
+            if(Mem_Vazia.get(i)[0] == -1) Mem_Vazia_R.add(Mem_Vazia.get(i));
+            for(int j = i+1;j<Mem_Vazia.size();j++){
+                if( (!Mem_Vazia_R.contains(Mem_Vazia.get(j))) && Mem_Vazia.get(i)[0] + Mem_Vazia.get(i)[1] == Mem_Vazia.get(j)[0]){
+                    int[] aux = new int[2];
+                    aux[0] = Mem_Vazia.get(i)[0];
+                    aux[1] = Mem_Vazia.get(i)[1] + Mem_Vazia.get(j)[1];
+                    Mem_Vazia.set(i, aux);
+                    Mem_Vazia_R.add(Mem_Vazia.get(j));
+                }
+           }
+        }
+        Mem_Vazia.removeAll(Mem_Vazia_R);
+   }*/
+    
+    static public int Relogio(){
+       int Endereco = -1;
+       while(MP[clock_stack%TAM_MAX_QUADROS_MP].isBit_U()){
+           MP[clock_stack%TAM_MAX_QUADROS_MP].setBit_U(false);
+           clock_stack++;
+       }
+       clock_stack = clock_stack%TAM_MAX_QUADROS_MP;
+       Endereco = clock_stack;
+       Contexto(Endereco);
+       return Endereco;
+   }
+    
+    
+   static public int LRU(){
+       //procura o menos recente
+       long min = System.currentTimeMillis();
+       int Endereco = -1;
+       for(int i = 0; i<TAM_MAX_QUADROS_MP;i++){
+           if(MP[i] != null && MP[i].getLRU() < min){
+               Endereco = i;
+               min = MP[i].getLRU();
+           }
+       }
+       //
+       Contexto(Endereco);
+       return Endereco;
+   }
+   
+   
+   static public void Contexto(int Endereco){
+        //atualiza tabela do processo e salva em MS se foi modificado
+       if(MP[Endereco] != null){
+           String Processo = MP[Endereco].getProcesso();
+           int Pagina = MP[Endereco].getPagina();
+           for(Tab_Pag T: Tab_Pag_Master){
+               if(T.getNome().equals(Processo) && T.getTab_Count() == Pagina/TAM_MAX_TABELA){
+                   T.getPaginas()[Pagina%TAM_MAX_TABELA].setP(false);
+                   if(T.getPaginas()[Pagina%TAM_MAX_TABELA].isM()){
+                       for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
+                           if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Processo) &&Mem_Sec[i].getPagina() == Pagina){
+                               Mem_Sec[i].setConteudo(MP[Endereco].getConteudo());
+                           }
+                       }
+                   T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
+                   }
+                   T.getPaginas()[Pagina%TAM_MAX_TABELA].setQuadro(-1);
+               }
+           }
+       }
+   }
+   
+   
+   static public int aloca(){
+    int Quadro = -1;
+    for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+    if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
+    }
+    if(Quadro == -1){
+    Random gerador = new Random(19700621);
+    if(gerador.nextInt(2)== 0)Quadro = LRU();
+    else Quadro = Relogio();
+    }
+    /*Quadro = Mem_Vazia.get(0)[0];
+           if (Mem_Vazia.get(0)[1] > 1){
+               int[] aux = new int[2];       
+               aux[0] = Mem_Vazia.get(0)[0] + 1;
+               aux[1] = Mem_Vazia.get(0)[1] - 1;
+               Mem_Vazia.set(0, aux);
+               }
+           else Mem_Vazia.remove(0);
+    */
+    clock_stack = (Quadro+1)%TAM_MAX_QUADROS_MP;
+    return Quadro;
+   }
+   
+   
+   static public void bota_em_MP(int quadro, int pagina, String Process_Name){
+       for(int j = 0; j<TAM_MAX_PAGINAS_MS ;j++){
+           if(SO.Mem_Sec[j] != null && SO.Mem_Sec[j].getProcesso().equals(Process_Name) && pagina == SO.Mem_Sec[j].getPagina()){
+               Quadro q = new Quadro();
+               q.setBit_U(true);
+               q.setLRU(System.currentTimeMillis());
+               q.setConteudo(Mem_Sec[j].getConteudo());
+               q.setPagina(Mem_Sec[j].getPagina());
+               q.setProcesso(Mem_Sec[j].getProcesso());
+               SO.MP[quadro] = q;
+           }
+       }
+   }
+   
+   static public void atualiza_tab(int Quadro, int pagina, String Process_Name){
+       for(Tab_Pag T: Tab_Pag_Master){
+           if(T.getNome().equals(Process_Name) && T.getTab_Count() == pagina/TAM_MAX_TABELA){
+               T.getPaginas()[pagina%TAM_MAX_TABELA] = new Componente_TP();
+               T.getPaginas()[pagina%TAM_MAX_TABELA].setM(false);
+               T.getPaginas()[pagina%TAM_MAX_TABELA].setP(true);
+               T.getPaginas()[pagina%TAM_MAX_TABELA].setQuadro(Quadro);
+           }
+       }
+   }
+
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Mem_Vazia.add(new int[2]);
+        /*Mem_Vazia.add(new int[2]);
         Mem_Vazia.get(0)[0] = 0;
-        Mem_Vazia.get(0)[1] = TAM_MAX_QUADROS_MP;
+        Mem_Vazia.get(0)[1] = TAM_MAX_QUADROS_MP;*/
         String Process_Name;
         String Command;
         String Description;
@@ -86,16 +204,19 @@ public class SO {
                         if(P.getEstado().equals("Suspenso-Pronto")){
                             P.setEstado("Pronto");
                             for(int i = 0; i<3;i++){
-                                int Quadro;
-                                if(! Mem_Vazia.isEmpty()){
+                                int Quadro = -1;
+                                /*if(! Mem_Vazia.isEmpty()){
                                     Quadro = Mem_Vazia.get(0)[0];
                                     int[] aux = Mem_Vazia.get(0);
                                     aux[0] += 1;
                                     aux[1] -= 1;
                                     if(0 == aux[1]) Mem_Vazia.remove(0);
                                     else Mem_Vazia.set(0, aux);
+                                }*/
+                                for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+                                    if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
                                 }
-                                else Quadro = aloca();
+                                if(Quadro == -1) Quadro = aloca();
                                 bota_em_MP(Quadro, i, Process_Name);
                                 atualiza_tab(Quadro, i, Process_Name);
                             }
@@ -106,16 +227,11 @@ public class SO {
                                 if(T.getNome().equals(Process_Name) && T.getTab_Count() == Integer.parseInt(Description)/TAM_MAX_TABELA){
                                     if(T.getPaginas()[Integer.parseInt(Description)%TAM_MAX_TABELA] != null && T.getPaginas()[Integer.parseInt(Description)%TAM_MAX_TABELA].isP()) System.out.println("EM MEMORIA, EXECUTANDO");
                                     else{
-                                        int Quadro;
-                                        if(! Mem_Vazia.isEmpty()){
-                                            Quadro = Mem_Vazia.get(0)[0];
-                                            int[] aux = Mem_Vazia.get(0);
-                                            aux[0] += 1;
-                                            aux[1] -= 1;
-                                            if(0 == aux[1]) Mem_Vazia.remove(0);
-                                            else Mem_Vazia.set(0, aux);
+                                        int Quadro = -1;
+                                        for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+                                            if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
                                         }
-                                        else Quadro = aloca();
+                                        if(Quadro == -1) Quadro = aloca();
                                         bota_em_MP(Quadro, Integer.parseInt(Description), Process_Name);
                                         atualiza_tab(Quadro, Integer.parseInt(Description), Process_Name);
                                         System.out.println("vindo da MP, agora em memoria");
@@ -226,16 +342,25 @@ public class SO {
                             for(int j = 0; j<TAM_MAX_TABELA;j++)Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j] = new Componente_TP();
                         }
                     }
-                    if(Mem_Vazia.get(0)[1] < 3)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
+                    ///if(Mem_Vazia.get(0)[1] < 3)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
+                    int count = 0;
+                    for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+                        if(MP[j] == null || MP[j].getPagina() == -1) count ++;
+                    }
+                    if(count < 3)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
                     else {Tab_Processos.get(Tab_Processos.size()-1).setEstado("Pronto");
+                    
                         for(int i = 0; i<3;i++){
                             int Quadro;
-                            Quadro = Mem_Vazia.get(0)[0];
+                            for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+                                if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
+                            }
+                            /*Quadro = Mem_Vazia.get(0)[0];
                             int[] auxX = Mem_Vazia.get(0);
                             auxX[0] += 1;
                             auxX[1] -= 1;
                             if(0 == auxX[1]) Mem_Vazia.remove(0);
-                            else Mem_Vazia.set(0, auxX);
+                            else Mem_Vazia.set(0, auxX);*/
                             bota_em_MP(Quadro, i, Process_Name);
                             atualiza_tab(Quadro, i, Process_Name);
                         }
@@ -246,7 +371,13 @@ public class SO {
 
 
             else if(Command.equals("R")){
-                System.out.println("LEITURA");
+                Description = entrada.split(" ")[2];
+                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(Description.substring(6, 14), 2);
+                int offset = Integer.parseInt(Description.substring(15, 29), 2);
+
+                
+                
 
             }
             else if(Command.equals("W")){
@@ -273,11 +404,10 @@ public class SO {
                     if(T.getNome().equals(Process_Name)){Tab_Pag_Master_R.add(T);
                         for(Componente_TP C: T.getPaginas()){
                             if(C != null && C.isP()) MP[C.getQuadro()] = new Quadro();
-                            int index;
-                            int[] aux = new int[2];
+                            /*int[] aux = new int[2];
                             aux[0] = C.getQuadro();
                             aux[1] = 1;
-                            Mem_Vazia.add(aux);
+                            Mem_Vazia.add(aux);*/
                         }
                     }
                 }
@@ -298,129 +428,17 @@ public class SO {
             }
             
             
-           /* for(Pagina P: Mem_Sec)System.out.println(P);*/
-            Mem_List_Opt();
-            for(int i = 0; i<Mem_Vazia.size();i++)System.out.println(Mem_Vazia.get(i)[0] + " " + Mem_Vazia.get(i)[1]);
-            /*System.out.println(Tab_Processos);
-            for(Quadro Q: MP)System.out.println(Q);*/
+           for(Pagina P: Mem_Sec)System.out.println(P);
+            /*Mem_List_Opt();
+            for(int i = 0; i<Mem_Vazia.size();i++)System.out.println(Mem_Vazia.get(i)[0] + " " + Mem_Vazia.get(i)[1]);*/
+            System.out.println(Tab_Processos);
+            for(Quadro Q: MP)System.out.println(Q);
        
         }
     }
     
     
-     static public void Mem_List_Opt(){
-         for(int i = 0;i<Mem_Vazia.size();i++){
-             if(Mem_Vazia.get(i)[0] == -1) Mem_Vazia_R.add(Mem_Vazia.get(i));
-             for(int j = i+1;j<Mem_Vazia.size();j++){
-                 if( (!Mem_Vazia_R.contains(Mem_Vazia.get(j))) && Mem_Vazia.get(i)[0] + Mem_Vazia.get(i)[1] == Mem_Vazia.get(j)[0]){
-                     int[] aux = new int[2];
-                     aux[0] = Mem_Vazia.get(i)[0];
-                     aux[1] = Mem_Vazia.get(i)[1] + Mem_Vazia.get(j)[1];
-                     Mem_Vazia.set(i, aux);
-                     Mem_Vazia_R.add(Mem_Vazia.get(j));
-                 }
-            }
-         }
-         Mem_Vazia.removeAll(Mem_Vazia_R);
-    }
-     
-     static public int Relogio(){
-        int Endereco = -1;
-        while(MP[clock_stack%TAM_MAX_QUADROS_MP].isBit_U()){
-            MP[clock_stack%TAM_MAX_QUADROS_MP].setBit_U(false);
-            clock_stack++;
-        }
-        clock_stack = clock_stack%TAM_MAX_QUADROS_MP;
-        Endereco = clock_stack;
-        Contexto(Endereco);
-        return Endereco;
-    }
-     
-     
-    static public int LRU(){
-        //procura o menos recente
-        long min = System.currentTimeMillis();
-        int Endereco = -1;
-        for(int i = 0; i<TAM_MAX_QUADROS_MP;i++){
-            if(MP[i] != null && MP[i].getLRU() < min){
-                Endereco = i;
-                min = MP[i].getLRU();
-            }
-        }
-        //
-        Contexto(Endereco);
-        return Endereco;
-    }
-    
-    
-    static public void Contexto(int Endereco){
-         //atualiza tabela do processo e salva em MS se foi modificado
-        if(MP[Endereco] != null){
-            String Processo = MP[Endereco].getProcesso();
-            int Pagina = MP[Endereco].getPagina();
-            for(Tab_Pag T: Tab_Pag_Master){
-                if(T.getNome().equals(Processo) && T.getTab_Count() == Pagina/TAM_MAX_TABELA){
-                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setP(false);
-                    if(T.getPaginas()[Pagina%TAM_MAX_TABELA].isM()){
-                        for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
-                            if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Processo) &&Mem_Sec[i].getPagina() == Pagina){
-                                Mem_Sec[i].setConteudo(MP[Endereco].getConteudo());
-                            }
-                        }
-                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
-                    }
-                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setQuadro(-1);
-                }
-            }
-        }
-    }
-    
-    
-    static public int aloca(){
-        int Quadro;
-        if(Mem_Vazia.isEmpty()){
-            Random gerador = new Random(19700621);
-            if(gerador.nextInt(2)== 0)Quadro = LRU();
-            else Quadro = Relogio();
-            }
-        else {Quadro = Mem_Vazia.get(0)[0];
-            if (Mem_Vazia.get(0)[1] > 1){
-                int[] aux = new int[2];       
-                aux[0] = Mem_Vazia.get(0)[0] + 1;
-                aux[1] = Mem_Vazia.get(0)[1] - 1;
-                Mem_Vazia.set(0, aux);
-                }
-            else Mem_Vazia.remove(0);
-            }
-        clock_stack = (Quadro+1)%TAM_MAX_QUADROS_MP;
-        return Quadro;
-    }
-    
-    
-    static public void bota_em_MP(int quadro, int pagina, String Process_Name){
-        for(int j = 0; j<TAM_MAX_PAGINAS_MS ;j++){
-            if(SO.Mem_Sec[j] != null && SO.Mem_Sec[j].getProcesso().equals(Process_Name) && pagina == SO.Mem_Sec[j].getPagina()){
-                Quadro q = new Quadro();
-                q.setBit_U(true);
-                q.setLRU(System.currentTimeMillis());
-                q.setConteudo(Mem_Sec[j].getConteudo());
-                q.setPagina(Mem_Sec[j].getPagina());
-                q.setProcesso(Mem_Sec[j].getProcesso());
-                SO.MP[quadro] = q;
-            }
-        }
-    }
-    
-    static public void atualiza_tab(int Quadro, int pagina, String Process_Name){
-        for(Tab_Pag T: Tab_Pag_Master){
-            if(T.getNome().equals(Process_Name) && T.getTab_Count() == pagina/TAM_MAX_TABELA){
-                T.getPaginas()[pagina%TAM_MAX_TABELA] = new Componente_TP();
-                T.getPaginas()[pagina%TAM_MAX_TABELA].setM(false);
-                T.getPaginas()[pagina%TAM_MAX_TABELA].setP(true);
-                T.getPaginas()[pagina%TAM_MAX_TABELA].setQuadro(Quadro);
-            }
-        }
-    }
+
     
 }
 

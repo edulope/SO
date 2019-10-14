@@ -13,6 +13,9 @@ public class Pagina implements Comparable {
     private String Processo;
     private String Conteudo;
     private int Pagina;
+    
+    
+
 
     public Pagina() {
         this.Pagina = -1;

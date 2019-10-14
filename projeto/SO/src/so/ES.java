@@ -21,6 +21,7 @@ public class ES implements Runnable {
     
     @Override
     public void run () {
+        //Thread.sleep(5000);
         System.out.println("ES DO PROCESSO " + Process + " CONCLUIDO");
         System.out.println(SO.Mem_Sec[pedido%SO.TAM_MAX_PAGINAS_MS]);
         for(Processo P: SO.Tab_Processos){
