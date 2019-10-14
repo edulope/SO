@@ -215,7 +215,7 @@ public class SO {
                                 }*/
                                 for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
                                     if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
-                                }
+                                }   
                                 if(Quadro == -1) Quadro = aloca();
                                 bota_em_MP(Quadro, i, Process_Name);
                                 atualiza_tab(Quadro, i, Process_Name);
@@ -351,7 +351,7 @@ public class SO {
                     else {Tab_Processos.get(Tab_Processos.size()-1).setEstado("Pronto");
                     
                         for(int i = 0; i<3;i++){
-                            int Quadro;
+                            int Quadro = -1;
                             for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
                                 if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
                             }
