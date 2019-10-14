@@ -13,15 +13,15 @@ import java.util.Collections;
 
 /*
 Paginas: 1 mb
-tamanho maximo da memoria 1024*1kb
-tamanho maximo da ms 4096*1kb
-se um processo pode ter no maximo 1 tabela, entao tam maximo de um processo = 256*1kb
+tamanho maximo da memoria 1024*1mb
+tamanho maximo da ms 4096*1mb
+se um processo pode ter no maximo 1 tabela, entao tam maximo de um processo = 256*1 mb
 */
 
 /*Tab_Pag_Master(similar a tabela de segmentos, vai ser um array de tabelas de paginas)
 em cada tabela existe um array de paginas(Componente_TP)todas de um mesmo processo 
 os 10(1kb) bits menos significativos enderecam o deslocamento na pagina, em seguida 8 bits enderecam a pagina na tabela(max = 256), 
-depois os 5 bits enderecam a tabela, logo 5 + 8 + 10 = tamanho do endereco logico
+depois os 5 bits enderecam a tabela, logo 5 + 8 = 13 tamanho do endereco logico
 */
 
 
@@ -114,13 +114,16 @@ public class SO {
    
    static public int aloca(){
     int Quadro = -1;
-    for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
-    if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
+    for(int j = 0; j<TAM_MAX_QUADROS_MP; j++){
+        if(MP[j] == null || MP[j].getPagina() == -1) {
+            Quadro = j; 
+            j = TAM_MAX_QUADROS_MP;
+        }
     }
     if(Quadro == -1){
-    Random gerador = new Random(19700621);
-    if(gerador.nextInt(2)== 0)Quadro = LRU();
-    else Quadro = Relogio();
+        Random gerador = new Random(19700621);
+        if(gerador.nextInt(2) == 0) Quadro = LRU();
+        else Quadro = Relogio();
     }
     /*Quadro = Mem_Vazia.get(0)[0];
            if (Mem_Vazia.get(0)[1] > 1){
@@ -135,7 +138,7 @@ public class SO {
     return Quadro;
    }
    
-   
+   //faz alocacao do quadro, pega o quadro solicitado e instancia
    static public void bota_em_MP(int quadro, int pagina, String Process_Name){
        for(int j = 0; j<TAM_MAX_PAGINAS_MS ;j++){
            if(SO.Mem_Sec[j] != null && SO.Mem_Sec[j].getProcesso().equals(Process_Name) && pagina == SO.Mem_Sec[j].getPagina()){
@@ -150,6 +153,7 @@ public class SO {
        }
    }
    
+   //atualiza a tabela de paginas, setando os bits e o quadro para a pagina
    static public void atualiza_tab(int Quadro, int pagina, String Process_Name){
        for(Tab_Pag T: Tab_Pag_Master){
            if(T.getNome().equals(Process_Name) && T.getTab_Count() == pagina/TAM_MAX_TABELA){
@@ -161,7 +165,7 @@ public class SO {
        }
    }
 
-    
+
     /**
      * @param args the command line arguments
      */
@@ -172,6 +176,7 @@ public class SO {
         String Process_Name;
         String Command;
         String Description;
+        String New_Content;
         String entrada = ""; 
         
         
@@ -371,18 +376,104 @@ public class SO {
 
 
             else if(Command.equals("R")){
+                /*
+                percorrer a tabela de paginas
+                pagina dentro da tab_pag
+                pab_pag.paginas
+                p == 1
+                tab_pag.get(quadro).quadro
+                aloca
+                1)consultar se a pagina ta la
+                2)se nao tiver, alocar(alem de setar bit p pra 1 e quadro para o quadro alocado)
+                ir na tab de processos e deixar o processo em bloqueado
+                criar thread de leitura em mp(similar a do ES)
+                public ES(int pedido, String Process){
+                        this.pedido = pedido;
+                        this.Process = Process;
+                    }
+
+                em E/S
+                ///////////////////////////////////////////////
+                public ES(int pedido, String Process){
+                        this.pedido = pedido;
+                        this.Process = Process;
+                    }
+
+                em E/S:
+                int pedido = entrada diretamente
+                MP[entrada]
+
+                em leitura e escrita:
+                int pedido = quadro em TAB_PAG_MASTER.get(Tab_Pag).getPaginas()[Pagina].getQuadro
+
+                \\\\\\\\\\\\\\\\\\\\\
+                MP[ TAB_PAG_MASTER.get(Tab_Pag).getPaginas()[Pagina].getQuadro]
+                */
                 Description = entrada.split(" ")[2];
                 int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(Description.substring(6, 14), 2);
-                int offset = Integer.parseInt(Description.substring(15, 29), 2);
-
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
+                System.out.println(Tabela);
+                System.out.println(Pagina);
                 
-                
+//
 
+                Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
+
+                //Se nao estiver na tabela, aloca na MP
+                if(!paginaTP.isP()){
+
+                    int novoQuadro = aloca();
+                    
+                    Pagina pag = null;
+                    for(Pagina pagAux : Mem_Sec){
+
+                        if(pagAux.getProcesso() == Process_Name && pagAux.getPagina() == Pagina)  pag = pagAux;
+
+                    }
+
+                    if(pag != null) bota_em_MP(novoQuadro, Pagina, pag.getProcesso());
+
+                }
+
+                Quadro quadro = MP[paginaTP.getQuadro()];
+                System.out.println("O conteúdo escrito é: " + quadro.getConteudo());
+                
             }
+
             else if(Command.equals("W")){
-                System.out.println("ESCRITA");
+
+                Description = entrada.split(" ")[2];
+                New_Content = entrada.split(" ")[3];
+                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
+
+                System.out.println(Tabela);
+                System.out.println(Pagina);
+
+                Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
+
+                if(!paginaTP.isP()){
+
+                    int novoQuadro = aloca();
+                    
+                    Pagina pag = null;
+                    for(Pagina pagAux : Mem_Sec){
+
+                        if(pagAux.getProcesso() == Process_Name && pagAux.getPagina() == Pagina)  pag = pagAux;
+
+                    }
+
+                    if(pag != null) bota_em_MP(novoQuadro, Pagina, pag.getProcesso());
+
+                }
+
+                int quadro = paginaTP.getQuadro();
+                MP[quadro].setConteudo(New_Content);
+
+                System.out.println("O conteúdo escrito é: " + MP[quadro].getConteudo());
+
             }
+
 
 
 
