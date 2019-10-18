@@ -92,24 +92,59 @@ public class SO {
    
    static public void Contexto(int Endereco){
         //atualiza tabela do processo e salva em MS se foi modificado
-       if(MP[Endereco] != null && MP[Endereco].getPagina()!= -1){
-           String Processo = MP[Endereco].getProcesso();
-           int Pagina = MP[Endereco].getPagina();
-           for(Tab_Pag T: Tab_Pag_Master){
-               if(T.getNome().equals(Processo) && T.getTab_Count() == Pagina/TAM_MAX_TABELA){
-                   T.getPaginas()[Pagina%TAM_MAX_TABELA].setP(false);
-                   if(T.getPaginas()[Pagina%TAM_MAX_TABELA].isM()){
-                       for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
-                           if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Processo) &&Mem_Sec[i].getPagina() == Pagina){
-                               Mem_Sec[i].setConteudo(MP[Endereco].getConteudo());
-                           }
-                       }
-                       T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
-                   }
-                   T.getPaginas()[Pagina%TAM_MAX_TABELA].setQuadro(-1);
-               }
-           }
-       }
+        String Processo = MP[Endereco].getProcesso();
+        if(MP[Endereco] != null && MP[Endereco].getPagina()!= -1){
+            int Pagina = MP[Endereco].getPagina();
+            for(Tab_Pag T: Tab_Pag_Master){
+                if(T.getNome().equals(Processo) && T.getTab_Count() == Pagina/TAM_MAX_TABELA){
+                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setP(false);
+                    if(T.getPaginas()[Pagina%TAM_MAX_TABELA].isM()){
+                        for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
+                            if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Processo) &&Mem_Sec[i].getPagina() == Pagina){
+                                Mem_Sec[i].setConteudo(MP[Endereco].getConteudo());
+                            }
+                        }
+                        T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
+                    }
+                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setQuadro(-1);
+                }
+            }
+        }
+        
+       
+        boolean temPag = false;
+        for(Tab_Pag T : Tab_Pag_Master){
+            if(T.getNome().equals(Processo)){
+                Componente_TP[] paginas = T.getPaginas();
+                for(int i = 0; i<TAM_MAX_TABELA; i++){
+
+                    if(paginas[i].isP() == true){
+
+                        //Se o processo ainda tem alguma página na MP
+                        temPag = true;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if(temPag == false){
+
+            for(Processo p : Tab_Processos){
+
+                if(p.getNome().equals(Processo))    p.setEstado("Suspenso");
+
+            }
+            
+        }
+
+       
+       
+       
+       
    }
    
    
@@ -312,6 +347,7 @@ public class SO {
                             Tab_Pag_Master.add(new Tab_Pag(Process_Name,Tamanho%TAM_MAX_TABELA,i));
                             for(int j = 0; j<Tamanho%TAM_MAX_TABELA;j++)Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j] = new Componente_TP();
                         }
+
                         else {Tab_Pag_Master.add(new Tab_Pag(Process_Name,TAM_MAX_TABELA,i));
                             for(int j = 0; j<TAM_MAX_TABELA;j++)Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j] = new Componente_TP();
                         }
