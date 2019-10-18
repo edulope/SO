@@ -23,14 +23,12 @@ public class ES implements Runnable {
     public void run () {
         //Thread.sleep(5000);
         System.out.println("ES DO PROCESSO " + Process + " CONCLUIDO");
-        System.out.println(SO.Mem_Sec[pedido%SO.TAM_MAX_PAGINAS_MS]);
+        if(SO.Mem_Sec[pedido%SO.TAM_MAX_PAGINAS_MS] != null && SO.Mem_Sec[pedido%SO.TAM_MAX_PAGINAS_MS].getPagina()!= -1)System.out.println(SO.Mem_Sec[pedido%SO.TAM_MAX_PAGINAS_MS]);
+        else System.out.println("Endereco nao utilizado");
         for(Processo P: SO.Tab_Processos){
-            
-                if(P.getNome().equals(Process)){
-                    if(P.getEstado().equals("Suspenso-Bloqueado")) P.setEstado("Suspenso-Pronto");
-                    else P.setEstado("Pronto");
-                }
-
+            if(P.getNome().equals(Process)){
+                P.setEstado("Pronto");
+            }
         }
     }
 }

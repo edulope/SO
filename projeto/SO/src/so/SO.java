@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package so;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -62,7 +63,7 @@ public class SO {
     
     static public int Relogio(){
        int Endereco = -1;
-       while(MP[clock_stack%TAM_MAX_QUADROS_MP].isBit_U()){
+       while(MP[clock_stack%TAM_MAX_QUADROS_MP]!= null && MP[clock_stack%TAM_MAX_QUADROS_MP].isBit_U()){
            MP[clock_stack%TAM_MAX_QUADROS_MP].setBit_U(false);
            clock_stack++;
        }
@@ -91,7 +92,7 @@ public class SO {
    
    static public void Contexto(int Endereco){
         //atualiza tabela do processo e salva em MS se foi modificado
-       if(MP[Endereco] != null){
+       if(MP[Endereco] != null && MP[Endereco].getPagina()!= -1){
            String Processo = MP[Endereco].getProcesso();
            int Pagina = MP[Endereco].getPagina();
            for(Tab_Pag T: Tab_Pag_Master){
@@ -103,7 +104,7 @@ public class SO {
                                Mem_Sec[i].setConteudo(MP[Endereco].getConteudo());
                            }
                        }
-                   T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
+                       T.getPaginas()[Pagina%TAM_MAX_TABELA].setM(false);
                    }
                    T.getPaginas()[Pagina%TAM_MAX_TABELA].setQuadro(-1);
                }
@@ -134,7 +135,7 @@ public class SO {
                }
            else Mem_Vazia.remove(0);
     */
-    clock_stack = (Quadro+1)%TAM_MAX_QUADROS_MP;
+    clock_stack = (Quadro)%TAM_MAX_QUADROS_MP;
     return Quadro;
    }
    
@@ -148,6 +149,7 @@ public class SO {
                q.setConteudo(Mem_Sec[j].getConteudo());
                q.setPagina(Mem_Sec[j].getPagina());
                q.setProcesso(Mem_Sec[j].getProcesso());
+               //Contexto(quadro);
                SO.MP[quadro] = q;
            }
        }
@@ -201,98 +203,53 @@ public class SO {
             if(Command.equals("P")){
                 System.out.println("EXECUTANDO");
                 Description = entrada.split(" ")[2];
-/*                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(Description.substring(6, 14), 2);
-*/                //fazendo por enderecamento de tabelas:
-                for(Processo P: Tab_Processos){
-                    if(P.getNome().equals(Process_Name)){
-                        if(P.getEstado().equals("Suspenso-Pronto")){
-                            P.setEstado("Pronto");
-                            for(int i = 0; i<3;i++){
-                                int Quadro = -1;
-                                /*if(! Mem_Vazia.isEmpty()){
-                                    Quadro = Mem_Vazia.get(0)[0];
-                                    int[] aux = Mem_Vazia.get(0);
-                                    aux[0] += 1;
-                                    aux[1] -= 1;
-                                    if(0 == aux[1]) Mem_Vazia.remove(0);
-                                    else Mem_Vazia.set(0, aux);
-                                }*/
-                                for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
-                                    if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
-                                }   
-                                if(Quadro == -1) Quadro = aloca();
-                                bota_em_MP(Quadro, i, Process_Name);
-                                atualiza_tab(Quadro, i, Process_Name);
+                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(Description.substring(6, 8), 2);
+                if(Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
+                //fazendo por enderecamento de tabelas:
+                    for(Processo P: Tab_Processos){
+                        if(P.getNome().equals(Process_Name)){
+                            if(P.getEstado().equals("Suspenso-Pronto")){
+                                for(int i = 0; i<3;i++){
+                                    int Quadro = -1;
+                                    for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+                                        if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
+                                    }   
+                                    if(Quadro == -1) Quadro = aloca();
+                                    clock_stack = Quadro;
+                                    bota_em_MP(Quadro, i, Process_Name);
+                                    atualiza_tab(Quadro, i, Process_Name);
+                                    P.setEstado("Pronto");
+                                }
                             }
-                        }
-                        if(P.getEstado().equals("Pronto")){
-                            P.setEstado("Executando");
-                            for(Tab_Pag T: Tab_Pag_Master){
-                                if(T.getNome().equals(Process_Name) && T.getTab_Count() == Integer.parseInt(Description)/TAM_MAX_TABELA){
-                                    if(T.getPaginas()[Integer.parseInt(Description)%TAM_MAX_TABELA] != null && T.getPaginas()[Integer.parseInt(Description)%TAM_MAX_TABELA].isP()) System.out.println("EM MEMORIA, EXECUTANDO");
-                                    else{
-                                        int Quadro = -1;
-                                        for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
-                                            if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
-                                        }
-                                        if(Quadro == -1) Quadro = aloca();
-                                        bota_em_MP(Quadro, Integer.parseInt(Description), Process_Name);
-                                        atualiza_tab(Quadro, Integer.parseInt(Description), Process_Name);
-                                        System.out.println("vindo da MP, agora em memoria");
-                                    }
+                            else if(P.getEstado().equals("Pronto")){
+                                if(Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].isP()){
+                                    P.setEstado("Executando");
+                                    int Quadro = Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].getQuadro();
+                                    System.out.println(MP[Quadro].getConteudo());
+                                    MP[Quadro].setLRU(System.currentTimeMillis());
+                                    MP[Quadro].setBit_U(true);
+                                    clock_stack = Quadro;
+                                }
+                                else{
+                                    P.setEstado("Bloqueado");
+                                    int Quadro = -1;
+                                    for(int i = 0; i<TAM_MAX_QUADROS_MP;i++){
+                                        if(MP[i] == null || MP[i].getPagina() == -1) {Quadro = i; i=TAM_MAX_QUADROS_MP;}
+                                    }   
+                                    if(Quadro == -1) Quadro = aloca();
+                                    clock_stack = Quadro;
+                                    bota_em_MP(Quadro, Pagina, Process_Name);
+                                    atualiza_tab(Quadro, Pagina, Process_Name);
+                                    P.setEstado("Pronto");
                                 }
                             }
                         }
                     }
                 }
+                else System.out.println("O endereco solicitado nao pertence ao Processo");
             }
-                        /*  if(!(Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){ System.out.println("processo nao tem permissao para acessar tal pagina); break;}
-                            else{if(! (Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].isP())){
-                                System.out.println("processo nao esta em MP");
-                                int Quadro = aloca();
-                                MP[Quadro] = new Quadro();
-                                for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
-                                    if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Process_Name) &&Mem_Sec[i].getPagina() == Integer.parseInt(Description.substring(0, 14), 2)){
-                                        MP[Quadro].setConteudo(Mem_Sec[i].getConteudo());
-                                    }
-                                }
-                                MP[Quadro].setBit_U(true);
-                                MP[Quadro].setLRU(System.currentTimeMillis());
-                                Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].setP(true);
-                                Tab_Pag_Master.get(Tabela).getPaginas()[Pagina].setM(false);}
-                        }
-                        
 
-                        for(Tab_Pag T: Tab_Pag_Master){
-                            if(T.getNome().equals(Process_Name) && T.getTab_Count()== Integer.parseInt(Description, 2)/TAM_MAX_TABELA){
-                                try {Componente_TP aux = T.getPaginas()[Integer.parseInt(Description, 2)%TAM_MAX_TABELA];
-                                    int Quadro;    
-                                    if(aux.isP())Quadro = aux.getQuadro();
-
-                                    else{
-                                        System.out.println("processo nao esta em MP");
-                                        Random gerador = new Random(19700621);
-                                        if(gerador.nextInt(2)== 0)Quadro = LRU();
-                                        else Quadro = Relogio();
-                                        clock_stack = (Quadro+1)%TAM_MAX_QUADROS_MP;
-
-                                        //politica de substituicao LRU ou Relogio
-                                        //retorna quadro disponivel
-                                        for(int i = 0; i<TAM_MAX_PAGINAS_MS;i++){
-                                            if(Mem_Sec[i] != null && Mem_Sec[i].getProcesso().equals(Process_Name) &&Mem_Sec[i].getPagina() == Integer.parseInt(Description, 2)/TAM_MAX_TABELA){
-                                                MP[Quadro].setConteudo(Mem_Sec[i].getConteudo());
-                                            }
-                                        }
-                                    }
-                                MP[Quadro].setBit_U(true);
-                                MP[Quadro].setLRU(System.currentTimeMillis());
-                                aux.setP(true);
-                                aux.setM(false);
-                                }
-                                catch(Exception e){System.out.println("endereco logico inexistente");}
-                            }
-                        }*/
 
             else if(Command.equals("I")){
                 System.out.println("E/S");
@@ -300,8 +257,20 @@ public class SO {
                 //seta estado pra bloqueado
                  for(Processo P: Tab_Processos){
                     if(P.getNome().equals(Process_Name)){
-                        if(P.getEstado().equals("Suspenso-Pronto")) P.setEstado("Suspenso-Bloqueado");
-                        else P.setEstado("Bloqueado");
+                        if(P.getEstado().equals("Suspenso-Pronto")){
+                            for(int i = 0; i<3;i++){
+                                int Quadro = -1;
+                                for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
+                                    if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
+                                }   
+                                if(Quadro == -1) Quadro = aloca();
+                                clock_stack = Quadro;
+                                bota_em_MP(Quadro, i, Process_Name);
+                                atualiza_tab(Quadro, i, Process_Name);
+                                P.setEstado("Pronto");
+                            }  
+                        }
+                        P.setEstado("Bloqueado");
                     }
                  }
                 //
