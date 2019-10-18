@@ -210,8 +210,8 @@ public class SO {
             if(Command.equals("P")){
                 System.out.println("EXECUTANDO");
                 Description = entrada.split(" ")[2];
-                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(Description.substring(6, 8), 2);
+                int Tabela = Integer.parseInt(entrada.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(entrada.substring(5, 13), 2);
                 System.out.println("tab" + Tabela);
                 System.out.println("pag " + Pagina);
                 if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
@@ -257,6 +257,7 @@ public class SO {
                 System.out.println("E/S");
                 Description = entrada.split(" ")[2];
                 //seta estado pra bloqueado
+                int endereco = Integer.parseInt(Description.substring(0, 12), 2);
                  for(Processo P: Tab_Processos){
                     if(P.getNome().equals(Process_Name)){
                         if(P.getEstado().equals("Suspenso-Pronto")){
@@ -274,7 +275,7 @@ public class SO {
                 //
 
                 //solicita ES, altera estado do processo quando concluido
-                Thread Request = new Thread(new ES(Integer.parseInt(Description, 2), Process_Name));
+                Thread Request = new Thread(new ES(endereco, Process_Name));
                 Request.start();   
                 //
 
@@ -377,8 +378,8 @@ public class SO {
                 MP[ TAB_PAG_MASTER.get(Tab_Pag).getPaginas()[Pagina].getQuadro]
                 */
                 Description = entrada.split(" ")[2];
-                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(Description.substring(6, 8), 2);
+                int Tabela = Integer.parseInt(entrada.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(entrada.substring(5, 13), 2);
                 System.out.println(Tabela);
                 System.out.println(Pagina);
                 
@@ -436,8 +437,8 @@ public class SO {
                 
                 Description = entrada.split(" ")[2];
                 New_Content = entrada.split(" ")[3];
-                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(Description.substring(6, 8), 2);
+                int Tabela = Integer.parseInt(entrada.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(entrada.substring(5, 13), 2);
                 System.out.println(Tabela);
                 System.out.println(Pagina);
                 
