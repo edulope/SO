@@ -45,5 +45,11 @@ public class Componente_TP {
     public void setQuadro(int Quadro) {
         this.Quadro = Quadro;
     }
+
+    @Override
+    public String toString() {
+        return "Componente_TP{" + "P=" + P + ", M=" + M + ", Quadro=" + Quadro + '}';
+    }
+    
     
 }

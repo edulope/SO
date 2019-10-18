@@ -27,7 +27,8 @@ public class ES implements Runnable {
         else System.out.println("Endereco nao utilizado");
         for(Processo P: SO.Tab_Processos){
             if(P.getNome().equals(Process)){
-                P.setEstado("Pronto");
+                if(P.getEstado().equals("Suspenso-Bloqueado")) P.setEstado("Suspenso-Pronto");
+                else P.setEstado("Pronto");
             }
         }
     }
