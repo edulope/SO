@@ -65,6 +65,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(245, 168, 184));
 
         jButton1.setText("Atualizar");
+        jButton1.setBorder(null);
+        jButton1.setBorderPainted(false);
+        jButton1.setFocusPainted(false);
+        jButton1.setFocusable(false);
+        jButton1.setRequestFocusEnabled(false);
+        jButton1.setRolloverEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -73,9 +79,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel5.setBackground(new java.awt.Color(91, 206, 250));
 
-        processos3.setBackground(new java.awt.Color(91, 206, 250));
-        processos3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        processos3.setForeground(new java.awt.Color(37, 37, 37));
+        processos3.setForeground(new java.awt.Color(250, 250, 250));
         processos3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         processos3.setText("cu");
 
@@ -102,6 +106,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(91, 206, 250));
 
+        processos2.setForeground(new java.awt.Color(250, 250, 250));
         processos2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         processos2.setText("no");
 
@@ -128,6 +133,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(91, 206, 250));
 
+        processos1.setForeground(new java.awt.Color(250, 250, 250));
         processos1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         processos1.setText("pau");
 
@@ -151,7 +157,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(91, 206, 250));
 
-        processos.setBackground(new java.awt.Color(91, 206, 250));
+        processos.setForeground(new java.awt.Color(250, 250, 250));
         processos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         processos.setText("P1 PRONTO");
 
@@ -172,7 +178,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel6.setBackground(new java.awt.Color(91, 206, 250));
 
-        jLabel1.setBackground(new java.awt.Color(91, 206, 250));
+        jLabel1.setForeground(new java.awt.Color(250, 250, 250));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Tabela de Processos");
         jLabel1.setToolTipText("");
@@ -200,7 +206,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel7.setBackground(new java.awt.Color(91, 206, 250));
 
-        jLabel2.setBackground(new java.awt.Color(91, 206, 250));
+        jLabel2.setForeground(new java.awt.Color(250, 250, 250));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Memória Principal");
         jLabel2.setToolTipText("");
@@ -228,6 +234,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel8.setBackground(new java.awt.Color(91, 206, 250));
 
+        jLabel3.setForeground(new java.awt.Color(250, 250, 250));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Tabela de Tabelas");
         jLabel3.setToolTipText("");
@@ -255,7 +262,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel9.setBackground(new java.awt.Color(91, 206, 250));
 
-        jLabel4.setBackground(new java.awt.Color(91, 206, 250));
+        jLabel4.setForeground(new java.awt.Color(250, 250, 250));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Memória Secundária");
         jLabel4.setToolTipText("");
