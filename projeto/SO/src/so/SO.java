@@ -13,6 +13,53 @@ import static java.lang.Math.pow;
 import java.util.Collections;
 
 /*
+P1 C 500 MB           OK
+
+P1 P 0000000000000    OK
+
+P1 R 0000000000000    OK
+
+P1 R 0010000000000    NOP
+
+P1 P 0000000000001    OK
+
+P1 R 0000000000001    OK
+
+P1 P 0000000000010    OK
+
+P1 W 0010000000000 2   NOP
+
+P7 C 1000 MB          OK
+
+P7 R 0111111111111    NOP
+
+P7 R 0001100100000    OK
+
+P7 I 000000000001     OK
+
+P7 R 0001100100001    OK
+
+P7 W 1000000000000 2  NOP
+
+P1 R 0000000000011    OK
+
+P1 R 0000000000100    OK
+
+P1 W 0010000000001 2    NOP
+
+P1 W 0010000000010 2    NOP
+
+P1 T                  OK
+
+
+
+
+
+
+
+
+
+
 Paginas: 1 mb
 tamanho maximo da memoria 1024*1mb
 tamanho maximo da ms 4096*1mb
@@ -32,6 +79,7 @@ depois os 5 bits enderecam a tabela, logo 5 + 8 = 13 tamanho do endereco logico
  */
 public class SO {
     static Scanner teclado = new Scanner(System.in);
+    static final int Min_Pag_Ini = 500;
     static final int TAM_MAX_QUADROS_MP = 1024;
     static final int TAM_MAX_PAGINAS_MS = 4*1024;
     static final int TAM_MAX_TABELA = 256;
@@ -92,8 +140,9 @@ public class SO {
    
    static public void Contexto(int Endereco){
         //atualiza tabela do processo e salva em MS se foi modificado
+       String Processo = "";
        if(MP[Endereco] != null && MP[Endereco].getPagina()!= -1){
-           String Processo = MP[Endereco].getProcesso();
+           Processo = MP[Endereco].getProcesso();
            int Pagina = MP[Endereco].getPagina();
            for(Tab_Pag T: Tab_Pag_Master){
                if(T.getNome().equals(Processo) && T.getTab_Count() == Pagina/TAM_MAX_TABELA){
@@ -110,7 +159,29 @@ public class SO {
                }
            }
        }
-   }
+       if(! Processo.equals("")){
+            boolean temPag = false;
+            for(Tab_Pag T : Tab_Pag_Master){
+                if(T.getNome().equals(Processo)){
+                    Componente_TP[] paginas = T.getPaginas();
+                    for(int i = 0; i<TAM_MAX_TABELA; i++){
+                        if(paginas[i] != null && paginas[i].isP() == true){
+                        //Se o processo ainda tem alguma página na MP
+                        temPag = true;
+                        }
+                    }
+                }
+            }
+            if(temPag == false){
+                for(Processo p : Tab_Processos){
+                    if(p.getNome().equals(Processo)){
+                        if(p.getEstado().equals("Pronto"))p.setEstado("Suspenso-Pronto");
+                        else if (p.getEstado().equals("Bloqueado"))p.setEstado("Suspenso-Bloqueado");
+                    }
+                }
+            }
+        }
+    }
    
    
    static public int aloca(){
@@ -157,6 +228,11 @@ public class SO {
    
    //atualiza a tabela de paginas, setando os bits e o quadro para a pagina
    static public void atualiza_tab(int Quadro, int pagina, String Process_Name){
+       int tamanho = 0;
+       for(Processo p: Tab_Processos){
+           if(p.getNome().equals(Process_Name))tamanho += p.getTamanho();
+       }
+       if(tamanho<=pagina)return;
        for(Tab_Pag T: Tab_Pag_Master){
            if(T.getNome().equals(Process_Name) && T.getTab_Count() == pagina/TAM_MAX_TABELA && T.getPaginas()[pagina%TAM_MAX_TABELA] != null){
                T.getPaginas()[pagina%TAM_MAX_TABELA] = new Componente_TP();
@@ -180,8 +256,8 @@ public class SO {
         String Description;
         String New_Content;
         String entrada; 
-        for(Quadro q: MP)q = new Quadro();
-        for(Pagina p: Mem_Sec)p = new Pagina();
+        for(int i = 0; i<TAM_MAX_QUADROS_MP ;i++)MP[i] = new Quadro();
+        for(int i = 0; i<TAM_MAX_PAGINAS_MS ;i++)Mem_Sec[i] = new Pagina();
         clock_stack = 0;
         int TAG = 0;
         while(!(Command.equals("E"))){
@@ -210,8 +286,8 @@ public class SO {
             if(Command.equals("P")){
                 System.out.println("EXECUTANDO");
                 Description = entrada.split(" ")[2];
-                int Tabela = Integer.parseInt(entrada.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(entrada.substring(5, 13), 2);
+                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
                 System.out.println("tab" + Tabela);
                 System.out.println("pag " + Pagina);
                 if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
@@ -219,7 +295,7 @@ public class SO {
                     for(Processo P: Tab_Processos){
                         if(P.getNome().equals(Process_Name)){
                             if(P.getEstado().equals("Suspenso-Pronto")){
-                                for(int i = 0; i<3;i++){
+                                for(int i = 0; i<Min_Pag_Ini;i++){
                                     int Quadro = aloca();
                                     clock_stack = Quadro;
                                     bota_em_MP(Quadro, i, Process_Name);
@@ -241,8 +317,8 @@ public class SO {
                                     int Quadro = -1;
                                     Quadro = aloca();
                                     clock_stack = Quadro;
-                                    bota_em_MP(Quadro, Pagina, Process_Name);
-                                    atualiza_tab(Quadro, Pagina, Process_Name);
+                                    bota_em_MP(Quadro, Tabela*256+Pagina, Process_Name);
+                                    atualiza_tab(Quadro, Tabela*256+Pagina, Process_Name);
                                     P.setEstado("Pronto");
                                 }
                             }
@@ -261,7 +337,7 @@ public class SO {
                  for(Processo P: Tab_Processos){
                     if(P.getNome().equals(Process_Name)){
                         if(P.getEstado().equals("Suspenso-Pronto")){
-                            for(int i = 0; i<3;i++){
+                            for(int i = 0; i<Min_Pag_Ini;i++){
                                 int Quadro = aloca();
                                 clock_stack = Quadro;
                                 bota_em_MP(Quadro, i, Process_Name);
@@ -310,20 +386,24 @@ public class SO {
                         if(i + 1 == N_Tab){
                             Tab_Pag_Master.add(new Tab_Pag(Process_Name,Tamanho%TAM_MAX_TABELA,i));
                             for(int j = 0; j<Tamanho%TAM_MAX_TABELA;j++)Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j] = new Componente_TP();
+                            /*for(int j = Tamanho%TAM_MAX_TABELA; j<TAM_MAX_TABELA;j++){
+                                Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j] = new Componente_TP();
+                                Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j].setUsado(false);
+                            }*/
                         }
                         else {Tab_Pag_Master.add(new Tab_Pag(Process_Name,TAM_MAX_TABELA,i));
                             for(int j = 0; j<TAM_MAX_TABELA;j++)Tab_Pag_Master.get(Tab_Pag_Master.size()-1).getPaginas()[j] = new Componente_TP();
                         }
                     }
-                    ///if(Mem_Vazia.get(0)[1] < 3)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
+                    ///if(Mem_Vazia.get(0)[1] < Min_Pag_Ini)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
                     int count = 0;
                     for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
                         if(MP[j] == null || MP[j].getPagina() == -1) count ++;
                     }
-                    if(count < 3)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
+                    if(count < Min_Pag_Ini)Tab_Processos.get(Tab_Processos.size()-1).setEstado("Suspenso-Pronto");
                     else {Tab_Processos.get(Tab_Processos.size()-1).setEstado("Pronto");
                     
-                        for(int i = 0; i<3;i++){
+                        for(int i = 0; i<Min_Pag_Ini;i++){
                             int Quadro = -1;
                             for(int j = 0; j<TAM_MAX_QUADROS_MP;j++){
                                 if(MP[j] == null || MP[j].getPagina() == -1) {Quadro = j; j=TAM_MAX_QUADROS_MP;}
@@ -378,15 +458,15 @@ public class SO {
                 MP[ TAB_PAG_MASTER.get(Tab_Pag).getPaginas()[Pagina].getQuadro]
                 */
                 Description = entrada.split(" ")[2];
-                int Tabela = Integer.parseInt(entrada.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(entrada.substring(5, 13), 2);
+                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
                 System.out.println(Tabela);
                 System.out.println(Pagina);
                 
                 for(Processo P: Tab_Processos){
                     if(P.getNome().equals(Process_Name)){
                         if(P.getEstado().equals("Suspenso-Pronto") || P.getEstado().equals("Suspenso-Bloqueado")){
-                            for(int i = 0; i<3;i++){
+                            for(int i = 0; i<Min_Pag_Ini;i++){
                                 int Quadro = aloca();
                                 clock_stack = Quadro;
                                 bota_em_MP(Quadro, i, Process_Name);
@@ -401,8 +481,8 @@ public class SO {
                     int Quadro = -1;
                     if(paginaTP != null && !paginaTP.isP()){     
                         Quadro = aloca();
-                        bota_em_MP(Quadro, Pagina, Process_Name);
-                        atualiza_tab(Quadro, Pagina, Process_Name);
+                        bota_em_MP(Quadro, Tabela*256+Pagina, Process_Name);
+                        atualiza_tab(Quadro, Tabela*256+Pagina, Process_Name);
                     }
                     else if(paginaTP != null && paginaTP.isP()){
                         Quadro = paginaTP.getQuadro();
@@ -437,15 +517,15 @@ public class SO {
                 
                 Description = entrada.split(" ")[2];
                 New_Content = entrada.split(" ")[3];
-                int Tabela = Integer.parseInt(entrada.substring(0, 5), 2);
-                int Pagina = Integer.parseInt(entrada.substring(5, 13), 2);
+                int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
                 System.out.println(Tabela);
                 System.out.println(Pagina);
                 
                 for(Processo P: Tab_Processos){
                     if(P.getNome().equals(Process_Name)){
                         if(P.getEstado().equals("Suspenso-Pronto") || P.getEstado().equals("Suspenso-Bloqueado")){
-                            for(int i = 0; i<3;i++){
+                            for(int i = 0; i<Min_Pag_Ini;i++){
                                 int Quadro = aloca();
                                 clock_stack = Quadro;
                                 System.out.println("fora da memoria, escrevendo em " + Quadro);
@@ -461,14 +541,15 @@ public class SO {
                     int Quadro = -1;
                     if(paginaTP != null && !paginaTP.isP()){     
                         Quadro = aloca();
-                        bota_em_MP(Quadro, Pagina, Process_Name);
-                        atualiza_tab(Quadro, Pagina, Process_Name);
+                        bota_em_MP(Quadro, Tabela*256+Pagina, Process_Name);
+                        atualiza_tab(Quadro, Tabela*256+Pagina, Process_Name);
                     }
                     else if(paginaTP != null && paginaTP.isP()){
                         Quadro = paginaTP.getQuadro();
                     }
-                    if(Quadro != -1){
+                    if(paginaTP != null && Quadro != -1){
                         MP[Quadro].setConteudo(New_Content);
+                        paginaTP.setM(true);
                         System.out.println("O conteúdo escrito é: " + MP[Quadro].getConteudo());
                     }
                     for(Processo P: Tab_Processos){
@@ -532,14 +613,20 @@ public class SO {
                 
 
                 //APAGA PROCESSO DA MEMORIA SECUNDARIA
-                boolean b = false;
+                int inicio = -1;
                 for(int i = 0; i<TAM_MAX_PAGINAS_MS; i++){
                     if(Mem_Sec[i] != null && Mem_Sec[i].getPagina() != -1){
-                        if(Mem_Sec[i].getProcesso().equals(Process_Name)){Mem_Sec[i] = new Pagina(); b = true;}
-                        if(b && i+tamanho<TAM_MAX_PAGINAS_MS) Mem_Sec[i] = Mem_Sec[i+tamanho];
-                        }
+                        if(Mem_Sec[i].getProcesso().equals(Process_Name)){
+                            if(inicio == -1) inicio = i;
+                            Mem_Sec[i] = new Pagina();
+                    }
                     else i = TAM_MAX_PAGINAS_MS;
+                    }
                 }
+                for(int i = inicio; i<TAM_MAX_PAGINAS_MS; i++){
+                    if(i + tamanho < TAM_MAX_PAGINAS_MS)Mem_Sec[i] = Mem_Sec[i+tamanho];
+                }
+                for(int i = TAM_MAX_PAGINAS_MS-tamanho;i<TAM_MAX_PAGINAS_MS; i++)Mem_Sec[i] = new Pagina();
             }
             
             

@@ -13,6 +13,7 @@ public class Componente_TP {
     private boolean P;
     private boolean M;
     private int Quadro;
+    private boolean usado;
     /*P e M comecam com zero, quando processo e criado ele geralmente nao esta
     com todas as paginas em memoria
     alem disso, quadro = -1, indica que nao esta em memoria*/
@@ -20,6 +21,15 @@ public class Componente_TP {
         this.P = false;
         this.M = false;
         this.Quadro = -1;
+        usado = true;
+    }
+
+    public boolean isUsado() {
+        return usado;
+    }
+
+    public void setUsado(boolean usado) {
+        this.usado = usado;
     }
 
     public boolean isP() {
