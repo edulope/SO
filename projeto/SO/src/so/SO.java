@@ -10,6 +10,8 @@ import java.util.Random;
 import java.lang.*;
 import static java.lang.Math.pow;
 import java.util.Collections;
+import javax.swing.SwingUtilities;
+import view.TelaPrincipal;
 
 /*
 Paginas: 1 mb
@@ -37,7 +39,7 @@ public class SO {
     static Quadro[] MP = new Quadro[TAM_MAX_QUADROS_MP];
     static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
     static ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
-    static ArrayList<Processo> Tab_Processos = new ArrayList();
+    static public ArrayList<Processo> Tab_Processos = new ArrayList();
     static ArrayList<Processo> Tab_Processos_R = new ArrayList();
     /*static ArrayList<int[]> Mem_Vazia = new ArrayList<int[]>();
     static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();*/
@@ -175,10 +177,12 @@ public class SO {
         Mem_Vazia.get(0)[1] = TAM_MAX_QUADROS_MP;*/
         String Process_Name;
         String Command;
+        
         String Description;
         String New_Content;
         String entrada = ""; 
-        
+        TelaPrincipal telaPrincipal = new TelaPrincipal();
+        telaPrincipal.setVisible(true);
         
         while(!(entrada.equals("E"))){
             System.out.println("bem vindo ao SO, suas opcoes sao:");
@@ -524,6 +528,21 @@ public class SO {
             for(int i = 0; i<Mem_Vazia.size();i++)System.out.println(Mem_Vazia.get(i)[0] + " " + Mem_Vazia.get(i)[1]);*/
             System.out.println(Tab_Processos);
             for(Quadro Q: MP)System.out.println(Q);
+           //SwingUtilities.updateComponentTreeUI(telaPrincipal);
+            
+            String textoProcesso = "";
+            
+            for(Processo P: Tab_Processos){
+                
+                String a = P.getNome();
+                String b = P.getEstado();
+                textoProcesso = textoProcesso + a + " " + b + "\n";
+            }
+            
+            telaPrincipal.repaint();
+            System.out.println(textoProcesso);
+            
+
        
         }
     }
