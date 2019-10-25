@@ -255,6 +255,8 @@ public class SO {
         Mem_Vazia.get(0)[1] = TAM_MAX_QUADROS_MP;*/
         String Process_Name;
         String Command = "";
+        TelaPrincipal telaPrincipal = new TelaPrincipal();
+        telaPrincipal.setVisible(true);
         String Description;
         String New_Content;
         String entrada; 
