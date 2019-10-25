@@ -18,10 +18,11 @@ public class Tab_Pag {
 
     public Tab_Pag(String nome, int tamanho, int count) {
         this.nome = nome;
-        Paginas = new Componente_TP[tamanho];
+        Paginas = new Componente_TP[SO.TAM_MAX_TABELA];
         for(Componente_TP c: Paginas){
             c = new Componente_TP();
         }
+        for(int i = tamanho; i<SO.TAM_MAX_TABELA; i++)Paginas[i] = null;
         this.Tab_Count = count;
     }
 
