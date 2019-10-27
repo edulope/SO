@@ -496,8 +496,8 @@ public class SO {
                     }
                     for(Processo P: Tab_Processos){
                         if(P.getNome().equals(Process_Name)){
-                            if(P.getNome().equals("Bloqueado"))P.setEstado("Pronto");
-                            if(P.getNome().equals("Suspenso-Bloqueado"))P.setEstado("Suspenso-Pronto");
+                            if(P.getEstado().equals("Bloqueado"))P.setEstado("Pronto");
+                            if(P.getEstado().equals("Suspenso-Bloqueado"))P.setEstado("Suspenso-Pronto");
                         }
                     }
                 }
@@ -558,8 +558,8 @@ public class SO {
                     }
                     for(Processo P: Tab_Processos){
                         if(P.getNome().equals(Process_Name)){
-                            if(P.getNome().equals("Bloqueado"))P.setEstado("Pronto");
-                            if(P.getNome().equals("Suspenso-Bloqueado"))P.setEstado("Suspenso-Pronto");
+                            if(P.getEstado().equals("Bloqueado"))P.setEstado("Pronto");
+                            if(P.getEstado().equals("Suspenso-Bloqueado"))P.setEstado("Suspenso-Pronto");
                         }
                     }
                 }
