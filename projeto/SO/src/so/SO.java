@@ -85,14 +85,14 @@ public class SO {
     static final int TAM_MAX_QUADROS_MP = 1024;
     static final int TAM_MAX_PAGINAS_MS = 4*1024;
     static final int TAM_MAX_TABELA = 256;
-    static Quadro[] MP = new Quadro[TAM_MAX_QUADROS_MP];
+    static public Quadro[] MP = new Quadro[TAM_MAX_QUADROS_MP];
     static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
     static ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
     static public ArrayList<Processo> Tab_Processos = new ArrayList();
     static ArrayList<Processo> Tab_Processos_R = new ArrayList();
     /*static ArrayList<int[]> Mem_Vazia = new ArrayList<int[]>();
     static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();*/
-    static Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
+    static public Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
     static int clock_stack = 0;
 
     /*static public void Mem_List_Opt(){
