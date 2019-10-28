@@ -285,6 +285,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         tabelaDeTabelas1.setBackground(new java.awt.Color(91, 206, 250));
         tabelaDeTabelas1.setBorder(null);
+        tabelaDeTabelas1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         tabelaDeTabelas1.setToolTipText("");
         tabelaDeTabelas1.setAutoscrolls(true);
         tabelaDeTabelas1.setFocusable(false);
