@@ -81,10 +81,10 @@ depois os 5 bits enderecam a tabela, logo 5 + 8 = 13 tamanho do endereco logico
  */
 public class SO {
     static Scanner teclado = new Scanner(System.in);
-    static final int Min_Pag_Ini = 500;
-    static final int TAM_MAX_QUADROS_MP = 1024;
-    static final int TAM_MAX_PAGINAS_MS = 4*1024;
-    static final int TAM_MAX_TABELA = 256;
+    static public final int Min_Pag_Ini = 500;
+    static public final int TAM_MAX_QUADROS_MP = 1024;
+    static public final int TAM_MAX_PAGINAS_MS = 4*1024;
+    static public final int TAM_MAX_TABELA = 256;
     static public Quadro[] MP = new Quadro[TAM_MAX_QUADROS_MP];
     static public ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
     static public ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
@@ -93,7 +93,7 @@ public class SO {
     /*static ArrayList<int[]> Mem_Vazia = new ArrayList<int[]>();
     static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();*/
     static public Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
-    static int clock_stack = 0;
+    static public int clock_stack = 0;
 
     /*static public void Mem_List_Opt(){
         for(int i = 0;i<Mem_Vazia.size();i++){
