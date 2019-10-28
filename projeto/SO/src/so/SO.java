@@ -86,10 +86,10 @@ public class SO {
     static final int TAM_MAX_PAGINAS_MS = 4*1024;
     static final int TAM_MAX_TABELA = 256;
     static public Quadro[] MP = new Quadro[TAM_MAX_QUADROS_MP];
-    static ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
-    static ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
+    static public ArrayList<Tab_Pag> Tab_Pag_Master = new ArrayList();//limitaremos para seu len n passar de 32
+    static public ArrayList<Tab_Pag> Tab_Pag_Master_R = new ArrayList();
     static public ArrayList<Processo> Tab_Processos = new ArrayList();
-    static ArrayList<Processo> Tab_Processos_R = new ArrayList();
+    static public ArrayList<Processo> Tab_Processos_R = new ArrayList();
     /*static ArrayList<int[]> Mem_Vazia = new ArrayList<int[]>();
     static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();*/
     static public Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
@@ -641,7 +641,7 @@ public class SO {
                else{
                    for(Tab_Pag T :Tab_Pag_Master){
                        if(T.getNome().equals(Process_Name)){
-                           System.out.println(T.getNome() + " TAB " + T.getTab_Count());
+                           //System.out.println(T.getNome() + " TAB " + T.getTab_Count());
                            for(Componente_TP TP: T.getPaginas())System.out.println(TP);
                        }
                    }
