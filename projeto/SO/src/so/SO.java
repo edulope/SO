@@ -94,7 +94,7 @@ public class SO {
     static ArrayList<int[]> Mem_Vazia_R = new ArrayList<int[]>();*/
     static public Pagina[] Mem_Sec = new Pagina[TAM_MAX_PAGINAS_MS];
     static public int clock_stack = 0;
-
+    static public ArrayList<Bloqueado> ListaBloq = new ArrayList();
     /*static public void Mem_List_Opt(){
         for(int i = 0;i<Mem_Vazia.size();i++){
             if(Mem_Vazia.get(i)[0] == -1) Mem_Vazia_R.add(Mem_Vazia.get(i));
@@ -264,6 +264,8 @@ public class SO {
         for(int i = 0; i<TAM_MAX_PAGINAS_MS ;i++)Mem_Sec[i] = new Pagina();
         clock_stack = 0;
         int TAG = 0;
+        Thread Request = new Thread(new TrataBloq());
+        Request.start();
         while(!(Command.equals("E"))){
             System.out.println("bem vindo ao SO, suas opcoes sao:");
             System.out.println("P\nEx. P1 P (1024)2 --> é uma instrução executada em CPU (pode ser uma soma ou subtração) que está no endereço lógico (1024)2");
@@ -276,6 +278,7 @@ public class SO {
             System.out.println("Pp\nEx. 0 Pp --> exibe tabela de processos");
             System.out.println("Pmp\nEx. 0 Pmp --> exibe MP");
             System.out.println("Pms\nEx. 0 Pms --> exibe MS");
+            System.out.println("Pb\nEx. 0 Pb --> exibe fila de bloqueados");
             System.out.println("ou 0 E, para desligar o SO");
             System.out.println("TAG: " + TAG);
             TAG ++;
@@ -355,8 +358,7 @@ public class SO {
                 //
 
                 //solicita ES, altera estado do processo quando concluido
-                Thread Request = new Thread(new ES(endereco, Process_Name));
-                Request.start();   
+                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 12), " "); 
                 //
 
             }
@@ -480,7 +482,8 @@ public class SO {
                         P.setEstado("Bloqueado");
                     }
                 }
-                if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
+                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 13), " "); 
+                /*if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
                     Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
                     int Quadro = -1;
                     if(paginaTP != null && !paginaTP.isP()){     
@@ -501,7 +504,7 @@ public class SO {
                         }
                     }
                 }
-                else System.out.println("O endereco solicitado nao pertence ao Processo");
+                else System.out.println("O endereco solicitado nao pertence ao Processo");*/
 //
 
                     /*Pagina pag = null;
@@ -540,7 +543,8 @@ public class SO {
                         P.setEstado("Bloqueado");
                     }
                 }
-                if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
+                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 13), New_Content); 
+                /*if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
                     Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
                     int Quadro = -1;
                     if(paginaTP != null && !paginaTP.isP()){     
@@ -564,7 +568,7 @@ public class SO {
                     }
                 }
                 else System.out.println("O endereco solicitado nao pertence ao Processo");
-                
+                */
                
 
 
@@ -659,6 +663,10 @@ public class SO {
            
            if(Command.equals("Pms")){
                for(Pagina P:Mem_Sec) System.out.println(P);
+           }
+           
+           if(Command.equals("Pb")){
+               for(Bloqueado B : ListaBloq) System.out.println(B);
            }
             
             
