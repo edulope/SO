@@ -13,6 +13,13 @@ import static java.lang.Math.pow;
 import java.util.Collections;
 import javax.swing.SwingUtilities;
 import view.TelaPrincipal;
+/*lembrando, end virtual: 5 bits p tabela e 8 pra pagina na tabela
+ms 12 bits(1024 *4)
+mp 10 bits(1024)
+*/
+
+
+
 
 /*
 P1 C 500 MB           OK
@@ -358,7 +365,8 @@ public class SO {
                 //
 
                 //solicita ES, altera estado do processo quando concluido
-                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 12), " "); 
+                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 12), " ");
+                ListaBloq.add(Pedido);
                 //
 
             }
@@ -482,7 +490,8 @@ public class SO {
                         P.setEstado("Bloqueado");
                     }
                 }
-                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 13), " "); 
+                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 13), " ");
+                ListaBloq.add(Pedido);
                 /*if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
                     Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
                     int Quadro = -1;
@@ -543,7 +552,8 @@ public class SO {
                         P.setEstado("Bloqueado");
                     }
                 }
-                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 13), New_Content); 
+                Bloqueado Pedido = new Bloqueado(Process_Name, Command, Description.substring(0, 13), New_Content);
+                ListaBloq.add(Pedido);
                 /*if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
                     Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
                     int Quadro = -1;
