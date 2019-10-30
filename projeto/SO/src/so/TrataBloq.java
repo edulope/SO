@@ -14,8 +14,8 @@ public class TrataBloq implements Runnable {
     
     
     @Override
-    public void run () {
-       while(true){
+    synchronized public void run () {
+       
            if(!(SO.ListaBloq.isEmpty())){
                Bloqueado pedido;
                pedido = SO.ListaBloq.get(0);
@@ -90,6 +90,6 @@ public class TrataBloq implements Runnable {
                 SO.ListaBloq.remove(pedido);
                }
            }
-       }
+       
     }
 }

@@ -6,12 +6,14 @@
 package view;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import so.Bloqueado;
 import so.Componente_TP;
 import so.ES;
 import so.Pagina;
 import so.SO;
 import so.Processo;
 import so.Quadro;
+import static so.SO.ListaBloq;
 import static so.SO.MP;
 import static so.SO.Mem_Sec;
 import static so.SO.Min_Pag_Ini;
@@ -26,6 +28,7 @@ import static so.SO.aloca;
 import static so.SO.atualiza_tab;
 import static so.SO.bota_em_MP;
 import so.Tab_Pag;
+import so.TrataBloq;
 /**
  *
  * @author Amélia
@@ -132,6 +135,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jButton1.setText("Atualizar");
         jButton1.setBorder(null);
         jButton1.setBorderPainted(false);
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton1.setFocusPainted(false);
         jButton1.setFocusable(false);
         jButton1.setRequestFocusEnabled(false);
@@ -259,6 +263,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
 
         jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "B", "KB", "MB", "GB" }));
+        jComboBox3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -292,12 +297,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Criar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Criar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -364,11 +369,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel9)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Ler, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel6)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Ler, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -516,11 +521,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel14)
                     .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Solicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel16)
-                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Solicitar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -587,11 +592,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel17)
                     .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Executar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel22)
-                        .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Executar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -995,7 +1000,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
         textoTabMaster = textoTabMaster + "</html>";
         labelTabMaster.setText(textoTabMaster);
-
+        
+        Thread Request = new Thread(new TrataBloq());
+        Request.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
@@ -1109,45 +1116,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
         String Description = jTextField4.getText();
         String Process_Name = jTextField3.getText();
         int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-        int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
-        System.out.println(Tabela);
-        System.out.println(Pagina);
-
-        for(Processo P: Tab_Processos){
-            if(P.getNome().equals(Process_Name)){
-                if(P.getEstado().equals("Suspenso-Pronto") || P.getEstado().equals("Suspenso-Bloqueado")){
-                    for(int i = 0; i<Min_Pag_Ini;i++){
-                        int Quadro = aloca();
-                        clock_stack = Quadro;
-                        bota_em_MP(Quadro, i, Process_Name);
-                        atualiza_tab(Quadro, i, Process_Name);
-                    }  
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
+                System.out.println(Tabela);
+                System.out.println(Pagina);
+                
+                for(Processo P: Tab_Processos){
+                    if(P.getNome().equals(Process_Name)){
+                        if(P.getEstado().equals("Suspenso-Pronto") || P.getEstado().equals("Suspenso-Bloqueado")){
+                            for(int i = 0; i<Min_Pag_Ini;i++){
+                                int Quadro = aloca();
+                                clock_stack = Quadro;
+                                bota_em_MP(Quadro, i, Process_Name);
+                                atualiza_tab(Quadro, i, Process_Name);
+                            }  
+                        }
+                        P.setEstado("Bloqueado");
+                    }
                 }
-                P.setEstado("Bloqueado");
-            }
-        }
-        if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
-            Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
-            int Quadro = -1;
-            if(paginaTP != null && !paginaTP.isP()){     
-                Quadro = aloca();
-                bota_em_MP(Quadro, Tabela*256+Pagina, Process_Name);
-                atualiza_tab(Quadro, Tabela*256+Pagina, Process_Name);
-            }
-            else if(paginaTP != null && paginaTP.isP()){
-                Quadro = paginaTP.getQuadro();
-            }
-            if(Quadro != -1){
-                System.out.println("O conteúdo lido é: " + MP[Quadro].getConteudo());
-            }
-            for(Processo P: Tab_Processos){
-                if(P.getNome().equals(Process_Name)){
-                    if(P.getEstado().equals("Bloqueado"))P.setEstado("Pronto");
-                    if(P.getEstado().equals("Suspenso-Bloqueado"))P.setEstado("Suspenso-Pronto");
-                }
-            }
-        }
-        else System.out.println("O endereco solicitado nao pertence ao Processo");
+                Bloqueado Pedido = new Bloqueado(Process_Name, "R", Description.substring(0, 13), " ");
+                ListaBloq.add(Pedido);
         jButton1ActionPerformed(evt);
         
     }//GEN-LAST:event_LerActionPerformed
@@ -1165,46 +1152,26 @@ public class TelaPrincipal extends javax.swing.JFrame {
         String New_Content = jTextField10.getText();
         String Process_Name = jTextField5.getText();
         int Tabela = Integer.parseInt(Description.substring(0, 5), 2);
-        int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
-
-        for(Processo P: Tab_Processos){
-            if(P.getNome().equals(Process_Name)){
-                if(P.getEstado().equals("Suspenso-Pronto") || P.getEstado().equals("Suspenso-Bloqueado")){
-                    for(int i = 0; i<Min_Pag_Ini;i++){
-                        int Quadro = aloca();
-                        clock_stack = Quadro;
-                        System.out.println("fora da memoria, escrevendo em " + Quadro);
-                        bota_em_MP(Quadro, i, Process_Name);
-                        atualiza_tab(Quadro, i, Process_Name);
-                    }  
+                int Pagina = Integer.parseInt(Description.substring(5, 13), 2);
+                System.out.println(Tabela);
+                System.out.println(Pagina);
+                
+                for(Processo P: Tab_Processos){
+                    if(P.getNome().equals(Process_Name)){
+                        if(P.getEstado().equals("Suspenso-Pronto") || P.getEstado().equals("Suspenso-Bloqueado")){
+                            for(int i = 0; i<Min_Pag_Ini;i++){
+                                int Quadro = aloca();
+                                clock_stack = Quadro;
+                                System.out.println("fora da memoria, escrevendo em " + Quadro);
+                                bota_em_MP(Quadro, i, Process_Name);
+                                atualiza_tab(Quadro, i, Process_Name);
+                            }  
+                        }
+                        P.setEstado("Bloqueado");
+                    }
                 }
-                P.setEstado("Bloqueado");
-            }
-        }
-        if(Tab_Pag_Master.size()>Tabela && Tab_Pag_Master.get(Tabela).getNome().equals(Process_Name)){
-            Componente_TP paginaTP = Tab_Pag_Master.get(Tabela%TAM_MAX_TABELA).getPaginas()[Pagina];
-            int Quadro = -1;
-            if(paginaTP != null && !paginaTP.isP()){     
-                Quadro = aloca();
-                bota_em_MP(Quadro, Tabela*256+Pagina, Process_Name);
-                atualiza_tab(Quadro, Tabela*256+Pagina, Process_Name);
-            }
-            else if(paginaTP != null && paginaTP.isP()){
-                Quadro = paginaTP.getQuadro();
-            }
-            if(paginaTP != null && Quadro != -1){
-                MP[Quadro].setConteudo(New_Content);
-                paginaTP.setM(true);
-                System.out.println("O conteúdo escrito é: " + MP[Quadro].getConteudo());
-            }
-            for(Processo P: Tab_Processos){
-                if(P.getNome().equals(Process_Name)){
-                    if(P.getEstado().equals("Bloqueado"))P.setEstado("Pronto");
-                    if(P.getEstado().equals("Suspenso-Bloqueado"))P.setEstado("Suspenso-Pronto");
-                }
-            }
-        }
-        else System.out.println("O endereco solicitado nao pertence ao Processo");
+                Bloqueado Pedido = new Bloqueado(Process_Name, "W", Description.substring(0, 13), New_Content);
+                ListaBloq.add(Pedido);
         jButton1ActionPerformed(evt);
     }//GEN-LAST:event_GravarActionPerformed
 
@@ -1220,25 +1187,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
         String Process_Name = jTextField7.getText();
         String Description = jTextField8.getText();
         int endereco = Integer.parseInt(Description.substring(0, 12), 2);
-        for(Processo P: Tab_Processos){
-           if(P.getNome().equals(Process_Name)){
-               if(P.getEstado().equals("Suspenso-Pronto")){
-                   for(int i = 0; i<Min_Pag_Ini;i++){
-                       int Quadro = aloca();
-                       clock_stack = Quadro;
-                       bota_em_MP(Quadro, i, Process_Name);
-                       atualiza_tab(Quadro, i, Process_Name);
-                       P.setEstado("Pronto");
-                   }  
-               }
-               P.setEstado("Bloqueado");
-           }
-        }
-       //
+                 for(Processo P: Tab_Processos){
+                    if(P.getNome().equals(Process_Name)){
+                        if(P.getEstado().equals("Suspenso-Pronto")){
+                            for(int i = 0; i<Min_Pag_Ini;i++){
+                                int Quadro = aloca();
+                                clock_stack = Quadro;
+                                bota_em_MP(Quadro, i, Process_Name);
+                                atualiza_tab(Quadro, i, Process_Name);
+                                P.setEstado("Pronto");
+                            }  
+                        }
+                        P.setEstado("Bloqueado");
+                    }
+                 }
+                //
 
-       //solicita ES, altera estado do processo quando concluido
-       Thread Request = new Thread(new ES(endereco, Process_Name));
-       Request.start(); 
+                //solicita ES, altera estado do processo quando concluido
+                Bloqueado Pedido = new Bloqueado(Process_Name, "I", Description.substring(0, 12), " ");
+                ListaBloq.add(Pedido);
        jButton1ActionPerformed(evt);
     }//GEN-LAST:event_SolicitarActionPerformed
 
@@ -1390,12 +1357,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton Ler;
     private javax.swing.JScrollPane ScrollMP1;
     private javax.swing.JScrollPane ScrollMP2;
-    private javax.swing.JScrollPane ScrollMP3;
-    private javax.swing.JScrollPane ScrollMP4;
-    private javax.swing.JScrollPane ScrollMP5;
-    private javax.swing.JScrollPane ScrollMP6;
-    private javax.swing.JScrollPane ScrollMP7;
-    private javax.swing.JScrollPane ScrollMP8;
     private javax.swing.JScrollPane ScrollMP9;
     private javax.swing.JScrollPane ScrollMS;
     private javax.swing.JButton Solicitar;
@@ -1429,15 +1390,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
-    private javax.swing.JPanel jPanel19;
-    private javax.swing.JPanel jPanel20;
-    private javax.swing.JPanel jPanel21;
-    private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel23;
     private javax.swing.JPanel jPanel24;
     private javax.swing.JPanel jPanel25;
@@ -1461,12 +1416,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
     private javax.swing.JLabel labelMP;
-    private javax.swing.JLabel labelMP2;
-    private javax.swing.JLabel labelMP3;
-    private javax.swing.JLabel labelMP4;
-    private javax.swing.JLabel labelMP5;
-    private javax.swing.JLabel labelMP6;
-    private javax.swing.JLabel labelMP7;
     private javax.swing.JLabel labelMS;
     private javax.swing.JLabel labelTabMaster;
     private javax.swing.JLabel labelTabela;

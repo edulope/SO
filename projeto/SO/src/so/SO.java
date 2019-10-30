@@ -271,9 +271,10 @@ public class SO {
         for(int i = 0; i<TAM_MAX_PAGINAS_MS ;i++)Mem_Sec[i] = new Pagina();
         clock_stack = 0;
         int TAG = 0;
-        Thread Request = new Thread(new TrataBloq());
-        Request.start();
+        
         while(!(Command.equals("E"))){
+            Thread Request = new Thread(new TrataBloq());
+            Request.start();
             System.out.println("bem vindo ao SO, suas opcoes sao:");
             System.out.println("P\nEx. P1 P (1024)2 --> é uma instrução executada em CPU (pode ser uma soma ou subtração) que está no endereço lógico (1024)2");
             System.out.println("I\nEx. P1 I disco --> agora será executado uma instrução de entrada e saída pedido por P1 em disco");
